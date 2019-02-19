@@ -81,9 +81,9 @@ bool TKImageView::initDepthStencilImage(BaseVkInfo *info) {
     
     VkPhysicalDeviceMemoryProperties memoryProperty;
     vkGetPhysicalDeviceMemoryProperties(info->physicalDevice, &memoryProperty);
-    uint32_t memoryTypeIdx;
+    uint32_t memoryTypeIdx = 0;
     VkMemoryPropertyFlags requiredMemoryFlag = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    for (int i=0; i<memoryProperty.memoryTypeCount; ++i){
+    for (uint32_t i=0; i<memoryProperty.memoryTypeCount; ++i){
         if(requirement.memoryTypeBits & (1 << i)){
             if(requiredMemoryFlag == (memoryProperty.memoryTypes[i].propertyFlags & requiredMemoryFlag)){
                 memoryTypeIdx = i;
@@ -187,7 +187,7 @@ uint8_t *TKImageView::getDataFromPng(const char *file){
     png_infop  info_ptr;
     png_bytep *row_ptrs;
     uint8_t buf[PNG_BYTES_TO_CHECK];
-    uint32_t w, h, x, y, temp, color_type;
+    uint32_t temp, color_type;
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     info_ptr = png_create_info_struct(png_ptr);
     setjmp(png_jmpbuf(png_ptr));

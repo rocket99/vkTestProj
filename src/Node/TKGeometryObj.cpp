@@ -209,7 +209,6 @@ bool TKGeometryObj::initCylinder(float radius, float height){
     m_cylinderPara->height = height;
     m_cylinderPara->radius = radius;
 
-    uint32_t idx = 0;
     m_pointNum = 66;
     m_points = (TKVertice*)malloc(sizeof(TKVertice)*66);
     for(uint32_t i=0; i<=32; ++i){

@@ -168,7 +168,6 @@ void TKWindow::startRefresh() {
     TKLog("start refresh!\n");
    
     xcb_generic_event_t *event = nullptr;
-    xcb_client_message_event_t *cm;
     xcb_flush(m_connection);
      while(m_isRunning==true){ 
         event = xcb_poll_for_event(m_connection);

@@ -11,7 +11,7 @@
 class TKScene {
 public:
     TKScene();
-    ~TKScene();
+    virtual ~TKScene();
     static TKScene *scene(uint32_t width, uint32_t height);
     bool init(uint32_t width, uint32_t height);
 

@@ -46,13 +46,13 @@ bool BasicScene::initWithSize(uint32_t width, uint32_t height){
                                           Float3(0, 0.0, 2000.0),
                                           Float3(0.0, 1.0, 0.0));
     m_uniform = TKUniform::createWithSize(20);
-    float data[16]; memset(data, sizeof(float)*16, 0);
+    float data[16]; memset(data, 0, sizeof(float)*16);
     m_spaceSize = Float3(width, height, width);
     m_spaceSize.copyTo(data);
     m_uniform->updateData(data, sizeof(float)*4, 0);
     m_camera->viewProjMatrix().mapToBuffer(data);
     m_uniform->updateData(data, sizeof(float)*16, 4);
-    TKPipeline *pipeline = TKPipelineManager::manager()->getTKPipeline("basic");
+    //TKPipeline *pipeline = TKPipelineManager::manager()->getTKPipeline("basic");
     TKLog("basic scene init ok!\n");
     return true;
 }
@@ -63,17 +63,17 @@ void BasicScene::drawObjects(){
     m_camera->updateUniformData();
 
     float data[16];
-    memset(data, sizeof(float)*16, 0);
+    memset(data, 0, sizeof(float)*16);
     m_spaceSize.copyTo(data);
     m_uniform->updateData(data, sizeof(float)*4, 0);
     m_camera->viewProjMatrix().mapToBuffer(data);
     m_uniform->updateData(data, sizeof(float)*16, 4);
     
     TKPipeline *pipeline = TKPipelineManager::manager()->getTKPipeline("basic");
-    VkDescriptorSet descSet = pipeline->descriptorSet(m_currentIdx);
+//    VkDescriptorSet descSet = pipeline->descriptorSet(m_currentIdx);
     VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
     vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline());
 
-    VkWriteDescriptorSet writeDescSet = m_uniform->writeDescSet(descSet, 0);
+//   VkWriteDescriptorSet writeDescSet = m_uniform->writeDescSet(descSet, 0);
 }
 

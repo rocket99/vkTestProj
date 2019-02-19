@@ -18,7 +18,7 @@ TKBaseNode::TKBaseNode() {
 
 TKBaseNode::~TKBaseNode() {
     TKLog("destruct TKBaseNode %p!\n", this);
-    VkDevice device = TKBaseInfo::Info()->device;
+//    VkDevice device = TKBaseInfo::Info()->device;
     delete m_basicUniform;
     delete m_tranUniform;
     delete m_frontMaterialUniform;
@@ -44,7 +44,7 @@ bool TKBaseNode::initialize() {
 
 void TKBaseNode::refreshMaterial() {
     float buf[17];
-    memset(buf, sizeof(float)*17, 0);
+    memset(buf, 0, sizeof(float)*17);
     frontMaterial.mapToBuffer(&buf[0]);
     m_frontMaterialUniform->updateData(buf, sizeof(float)*17, 0);
     backMaterial.mapToBuffer(&buf[0]);

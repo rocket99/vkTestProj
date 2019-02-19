@@ -95,7 +95,7 @@ void Int2::operator *= (const Int2 &value) {
         __m128i data0 = _mm_setr_epi32(x, x, y, y);
         __m128i data1 = _mm_setr_epi32(value.x, value.x, value.y, value.y);
         __m128i ret0 = _mm_mul_epi32(data0, data1);
-        __m128i ret1 = _mm_mullo_epi32(data0, data1);
+//        __m128i ret1 = _mm_mullo_epi32(data0, data1);
         x = _mm_extract_epi32(ret0, 0);
         y = _mm_extract_epi32(ret0, 2);
         return;
@@ -166,7 +166,7 @@ Int2 operator * (const Int2 &v0, const Int2 &v1) {
         __m128i data0 = _mm_setr_epi32(v0.x, v0.x, v0.y, v0.y);
         __m128i data1 = _mm_setr_epi32(v1.x, v1.x, v1.y, v1.y);
         __m128i ret0 = _mm_mul_epi32(data0, data1);
-        __m128i ret1 = _mm_mullo_epi32(data0, data1);
+//        __m128i ret1 = _mm_mullo_epi32(data0, data1);
         return Int2(_mm_extract_epi32(ret0, 0), _mm_extract_epi32(ret0, 2));
     }
     return Int2(v0.x*v1.x, v0.y*v1.y);

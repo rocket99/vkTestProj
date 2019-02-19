@@ -38,7 +38,7 @@ bool LightScene::initLightScene(uint32_t lightNum){
     m_camera->updateUniformData();
     m_cameraUniform = TKUniform::createWithSize(sizeof(float)*20);
     m_eyeUniform = TKUniform::createWithSize(4);
-    float data[4]; memset(data, sizeof(float), 0);
+    float data[4]; memset(data, 0, sizeof(float));
     Float3 eyePos = m_camera->getPosition();
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     eyePos.copyTo(data);
@@ -147,13 +147,13 @@ void LightScene::initObjects(){
 
 void LightScene::drawObjects(){
     float data[16];
-    memset(data, sizeof(float)*16, 0);
+    memset(data, 0, sizeof(float)*16);
     m_spaceSize.copyTo(data);
     m_cameraUniform->updateData(data, sizeof(float)*4, 0);
     m_camera->viewProjMatrix().mapToBuffer(data);
     m_cameraUniform->updateData(data, sizeof(float)*16, 4);
 
-    memset(data, sizeof(float)*4, 0);
+    memset(data, 0, sizeof(float)*4);
     Float3 eyePos = m_camera->getPosition();
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_eyeUniform->updateData(data, sizeof(float)*3, 0);
