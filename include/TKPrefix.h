@@ -54,7 +54,7 @@ using namespace std;
 #define SCREEN_WIDTH   1000
 #define SCREEN_HEIGHT  1000
 #define PNG_BYTES_TO_CHECK 4
-#define PROJECT_PATH   "/home/sky/Github/VulkanTest"
+#define PROJECT_PATH   "/home/sky/Github/vkTestProj"
 
 struct BaseVkInfo {
     VkInstance       instance           = VK_NULL_HANDLE;

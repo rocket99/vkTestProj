@@ -3,13 +3,13 @@
     "ShaderStages":[
         {
             "stage":"VK_SHADER_STAGE_VERTEX_BIT",
-            "module":"light_vert",
+            "module":"light_vert.spv",
             "pName":"main",
             "pSpecializationInfo":""
         },
         {
             "stage":"VK_SHADER_STAGE_FRAGMENT_BIT",
-            "module":"light_frag",
+            "module":"light_frag.spv",
             "pName":"main",
             "pSpecializationInfo":""
         }
@@ -18,35 +18,35 @@
     "VertexInput":{
         "VertexBindDesc":[
             {
-                "binding":"0",
-                "stride":"1",
+                "binding":0,
+                "stride":48,
                 "inputState":"VK_VERTEX_INPUT_RATE_VERTEX"
             }
         ],
         "VertexAttribDesc":[
             {
-                "location":"0",
-                "binding":"0",
+                "location":0,
+                "binding":0,
                 "format":"VK_FORMAT_R32G32B32_BIT",
-                "offset":"0"
+                "offset":0
             },
             {
-                "location":"1",
-                "binding":"0",
+                "location":1,
+                "binding":0,
                 "format":"VK_FORMAT_R32G32B32_BIT",
-                "offset":"12"
+                "offset":12
             },
             {
-                "location":"2",
-                "binding":"0",
+                "location":2,
+                "binding":0,
                 "format":"VK_FORMAT_R32G32B32A32_BIT",
-                "offset":"24"
+                "offset":24
             },
             {
-                "location":"3",
-                "binding":"0",
+                "location":3,
+                "binding":0,
                 "format":"VK_FORMAT_R32G32_BIT",
-                "offset":"40"
+                "offset":40
             }
         ]
     },
@@ -131,7 +131,7 @@
                                   "VK_COLOR_COMPONENT_B_BIT","VK_COLOR_COMPONENT_A_BIT"]
             }
         ],
-        "blendConstants":["0.0", "0.0", "0.0", "0.0"];
+        "blendConstants":[0.0, 0.0, 0.0, 0.0]
     },
     "dynamicState":[
         "VK_DYNAMIC_STATE_VIEWPORT",

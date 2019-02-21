@@ -1,0 +1,1 @@
+/usr/bin/clang++     CMakeFiles/basic.dir/basic_main.cpp.o CMakeFiles/basic.dir/basic_scene.cpp.o  -o basic ../../src/libTKEngine.a -lvulkan -ljsoncpp -ljpeg -lpng -lpthread -lxcb 

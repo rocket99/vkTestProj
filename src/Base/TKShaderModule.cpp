@@ -106,6 +106,7 @@ void TKModuleManager::addNewModule(const char *fileName){
 
 VkShaderModule TKModuleManager::shaderModule(const char *fileName){
     if (TKModuleManager::shared()->moduleDict[fileName] == nullptr){
+		TKLog("const find module %s\n", fileName);
         return VK_NULL_HANDLE;
     }
     return TKModuleManager::shared()->moduleDict[fileName];

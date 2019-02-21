@@ -70,7 +70,8 @@ VkCompareOp TKVkUtility::VkCompareOpFrom(const std::string &str){
 
 VkColorComponentFlagBits TKVkUtility::VkColorComponentFlagBitFrom(const std::string &str){
     Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
-    uint32_t value = strtoul(root["ColorCompnentFlagBit"][str].asCString(), nullptr, 16);
+	TKLog("%s %s\n", str.c_str(), root.toStyledString().c_str());
+    uint32_t value = strtoul(root["ColorComponentFlagBit"][str].asCString(), nullptr, 16);
     return VkColorComponentFlagBits(value);
 }
 
@@ -136,7 +137,8 @@ Json::Value TKVkUtility::VkConfigFrom(const std::string &fileName){
         reader.parse(content, root);
         m_root[fileName] = root;
         fclose(fp);
-    }
+		TKLog("%s:%s\n", fileName.c_str(), root.toStyledString().c_str());
+	}
     return m_root[fileName];
 }
 

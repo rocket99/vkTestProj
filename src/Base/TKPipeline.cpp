@@ -92,6 +92,8 @@ bool TKPipeline::initWithJson(const char *fileName){
         TKLog("Json file has error! check the file %s\n", fileName);
         return false;
     }
+
+	TKLog("init pipeline from json start!\n");
     this->initShaderStagesFromJson(root["ShaderStages"]);
     this->initVertexInputStateFromJson(root["VertexInput"]);
     this->initAssembleStateFromJson(root["InputAssemble"]);
@@ -129,6 +131,8 @@ bool TKPipeline::initPipeline(const std::string &name){
     pipelineInfo.subpass             = 0;
     pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex   = -1;
+
+	TKLog("init pipeline %s\n", m_name.c_str());
     VkResult ret = vkCreateGraphicsPipelines(TKBaseInfo::Info()->device, VK_NULL_HANDLE,
                                              1, &pipelineInfo, nullptr, &m_pipeline);
     if (ret != VK_SUCCESS) {
@@ -217,17 +221,18 @@ bool TKPipeline::initShaderStagesFromJson(const Json::Value &value){
         TKLog("Load shader stage error!\n");
         return false;
     }
+	
     m_shaderStages.resize(value.size());
     for(uint i=0; i<value.size(); ++i){
-        Json::Value subValue = value[i];
-        std::string module = subValue["module"].asString();
+		Json::Value subValue = value[i];
+		std::string module = subValue["module"].asString();
         m_shaderStages[i].flags = 0;
         m_shaderStages[i].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         m_shaderStages[i].pNext = nullptr;
         m_shaderStages[i].module = TKModuleManager::shaderModule(module.c_str());
         std::string stageStr = subValue["stage"].asString();
-        m_shaderStages[i].stage = TKVkUtility::VkShaderStageFlagBitsFrom(stageStr);
-        m_shaderStages[i].pName = subValue["pName"].asString().c_str();
+        m_shaderStages[i].stage = TKVkUtility::VkShaderStageFlagBitsFrom(stageStr.c_str());
+		m_shaderStages[i].pName = subValue["pName"].asString().c_str();
         m_shaderStages[i].pSpecializationInfo = nullptr;
     }
     return true;
@@ -266,7 +271,7 @@ bool TKPipeline::initVertexInputStateFromJson(const Json::Value &value){
         std::string inputRateStr = bindValues[i]["inputRate"].asString();
         m_inputBindDesc[i].inputRate = TKVkUtility::VkInputRateFrom(inputRateStr);
     }
-
+ 
     for(uint32_t i=0; i<attrValues.size(); ++i){
         m_inputAttribDesc[i].binding  = attrValues[i]["binding"].asUInt();
         m_inputAttribDesc[i].location = attrValues[i]["location"].asUInt();
