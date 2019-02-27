@@ -13,11 +13,7 @@ class TKPipeline {
 public:
     TKPipeline();
     ~TKPipeline();
-
-    static TKPipeline *createWithJson(const char *fileName);
-    bool initWithJson(const char *fileName);
-    
-    
+	
     static TKPipeline *createGraphicPipeline(const char *vertFile, const char *fragFile,
                                              const char *geomFile = nullptr,
                                              const char *tessCtlFile = nullptr,
@@ -25,10 +21,6 @@ public:
     bool initGraphicPipeline(const char *vertFile, const char *fragFile,
                              const char *geomFile, const char *tessCtlFile,
                              const char *tessEvaFile);
-
-  
-    static TKPipeline *createComputePipeline(const std::string &name);
-    bool initComputePipeline(const std::string &name);
 
     bool initPipeline(const std::string &name);
     VkPipeline pipeline() const;
@@ -52,7 +44,6 @@ public:
                                  VkBool32 alphaToCoverage, VkBool32 alphaToOne);
 
     void initPipelineLayout(const std::string &name);
-    void initPipelineLayoutFromJson(const Json::Value &value);
 
     VkPipelineLayout pipelineLayout() const;
     VkDescriptorSet descriptorSet(uint32_t idx) const;
@@ -85,7 +76,6 @@ private:
 
     TKPipelineLayout *m_pipelineLayout = nullptr;     
     
-    
     std::vector<VkVertexInputBindingDescription>     m_inputBindDesc;
     std::vector<VkVertexInputAttributeDescription>   m_inputAttribDesc;
     std::vector<VkPipelineColorBlendAttachmentState> m_blendAttachArr;
@@ -93,17 +83,14 @@ private:
     std::vector<VkViewport>                          m_viewports;
     std::vector<VkRect2D>                            m_scissorRects;
 
-    bool initShaderStagesFromJson(const Json::Value &value);
-
-    bool initVertexInputStateFromJson(const Json::Value &value);
-    bool initAssembleStateFromJson(const Json::Value &value);
-    bool initTesslateStateFromJson(const Json::Value &value);
-    bool initViewportStateFromJson(const Json::Value &value);
-    bool initRasterizationFromJson(const Json::Value &value);
-    bool initColorBlendStateFromJson(const Json::Value &value);
-    bool initDepthStencilStateFromJson(const Json::Value &value);
-    bool initMultiSampleStateFromJson(const Json::Value &value);
-    bool initDynamicStateFromJson(const Json::Value &value);
+	void debugVertexInputState();
+	void debugInputAssemblyState();
+	void debugTessellationState();
+	void debugViewportState();
+	void debugRasterizationState();
+	void debugMultiSampleState();
+	void debugDepthStencilState();
+	void debugColorBlendState();
 };
 
 #endif

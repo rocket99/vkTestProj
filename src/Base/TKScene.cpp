@@ -90,7 +90,8 @@ void TKScene::updateDrawCommand(){
     beginInfo.framebuffer = TKBaseInfo::Info()->framebuffers[m_currentIdx];
     beginInfo.renderArea  = { {0, 0}, {SCREEN_WIDTH, SCREEN_HEIGHT} };
     std::vector<VkClearValue> clearValues(2);
-    clearValues[0] = {0.5f, 0.5f, 0.5f, 1.0f};
+	const float values[] = {0.5, 0.5, 0.5, 1.0};
+    memcpy(clearValues[0].color.float32, values, sizeof(float)*4);
     clearValues[1].depthStencil.depth = 1.0f;
     clearValues[1].depthStencil.stencil = 0.0f;
     beginInfo.clearValueCount = clearValues.size();

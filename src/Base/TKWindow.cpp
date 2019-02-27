@@ -68,17 +68,17 @@ void TKWindow::initInstance() {
     vkEnumerateInstanceExtensionProperties(nullptr, &instExtensionCount, nullptr);
     std::vector<VkExtensionProperties> instExtensions(instExtensionCount);
     vkEnumerateInstanceExtensionProperties(nullptr, &instExtensionCount, instExtensions.data());
-    /*
-    for(int i=0; i<instExtensionCount; ++i){
+/*    
+    for(uint32_t i=0; i<instExtensionCount; ++i){
         printf("\t%s\n", instExtensions[i].extensionName);
     }
-    */
+*/  
     uint32_t layerCount = 0;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
     std::vector<VkLayerProperties>layerProps(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, layerProps.data());
-    /*
-    for(int i=0; i<layerCount; ++i){
+	/*  
+    for(uint32_t i=0; i<layerCount; ++i){
         printf("\t%s\n", layerProps[i].layerName);
     }
     */
@@ -97,19 +97,20 @@ void TKWindow::initInstance() {
     info.flags                  = 0;
     info.pApplicationInfo       = &appInfo;
     std::vector<const char *> enabledLayers;
-    for(int i=0; i<layerCount; ++i){
+    for(uint32_t i=0; i<layerCount; ++i){
         if(strcmp(layerProps[i].layerName, "VK_LAYER_LUNARG_device_simulation")){
             continue;
         }
         enabledLayers.push_back(layerProps[i].layerName);
     }
+    
     info.enabledLayerCount      = enabledLayers.size();
     info.ppEnabledLayerNames    = enabledLayers.data();
     std::vector<const char *> enabledExtensions;
-    for(int i=0; i<instExtensionCount; ++i){
+    for(uint32_t i=0; i<instExtensionCount; ++i){
         enabledExtensions.push_back(instExtensions[i].extensionName);
     }
-    info.enabledExtensionCount   = enabledExtensions.size();
+	info.enabledExtensionCount   = enabledExtensions.size();
     info.ppEnabledExtensionNames = enabledExtensions.data();
 
     VkResult result = vkCreateInstance(&info, nullptr, &TKBaseInfo::Info()->instance);

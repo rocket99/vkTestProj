@@ -2,13 +2,13 @@
     "name":"light",
     "ShaderStages":[
         {
-            "stage":"VK_SHADER_STAGE_VERTEX_BIT",
+            "stage":1,
             "module":"light_vert.spv",
             "pName":"main",
             "pSpecializationInfo":""
         },
         {
-            "stage":"VK_SHADER_STAGE_FRAGMENT_BIT",
+            "stage":5,
             "module":"light_frag.spv",
             "pName":"main",
             "pSpecializationInfo":""
@@ -20,32 +20,32 @@
             {
                 "binding":0,
                 "stride":48,
-                "inputState":"VK_VERTEX_INPUT_RATE_VERTEX"
+                "inputRate":"VK_VERTEX_INPUT_RATE_VERTEX"
             }
         ],
         "VertexAttribDesc":[
             {
                 "location":0,
                 "binding":0,
-                "format":"VK_FORMAT_R32G32B32_BIT",
+                "format":"VK_FORMAT_R32G32B32_SFLOAT",
                 "offset":0
             },
             {
                 "location":1,
                 "binding":0,
-                "format":"VK_FORMAT_R32G32B32_BIT",
+                "format":"VK_FORMAT_R32G32B32_SFLOAT",
                 "offset":12
             },
             {
                 "location":2,
                 "binding":0,
-                "format":"VK_FORMAT_R32G32B32A32_BIT",
+                "format":"VK_FORMAT_R32G32B32A32_SFLOAT",
                 "offset":24
             },
             {
                 "location":3,
                 "binding":0,
-                "format":"VK_FORMAT_R32G32_BIT",
+                "format":"VK_FORMAT_R32G32_SFLOAT",
                 "offset":40
             }
         ]
@@ -70,11 +70,11 @@
     },
     "Rasterization":{
         "depthClampEnable":"VK_TRUE",
-        "rasterDiscard":"VK_TRUE",
+        "rasterDiscard":"VK_FALSE",
         "polygonMode":"VK_POLYGON_MODE_FILL",
         "cullMode":"VK_CULL_MODE_NONE",
         "frontFace":"VK_FRONT_FACE_COUNTER_CLOCKWISE",
-        "depthBiasEnable":"VK_TRUE",
+        "depthBiasEnable":"VK_FALSE",
         "depthBiasConstantFactor":1.0,
         "depthBiasClamp":0.0,
         "depthBiasSlopeFactor":0.0,
@@ -82,22 +82,22 @@
     },
     "MultiSample":{
         "rasterizationSamples":"VK_SAMPLE_COUNT_1_BIT",
-        "sampleShadingEnable":"VK_TRUE",
+        "sampleShadingEnable":"VK_FALSE",
         "minSampleShading":1.0,
         "pSampleMask":[],
         "alphaToCoverageEnable":"VK_FALSE",
-        "alphaToOneEnable":"VK_TRUE"
+        "alphaToOneEnable":"VK_FALSE"
     },
-    "depthStencil":{
-        "depthTestEnable":"VK_TRUE",
+    "DepthStencil":{
+        "depthTestEnable":"VK_FALSE",
         "depthWriteEnable":"VK_TRUE",
-        "depthCompareOp":"VK_COMPARE_OP_LESS",
-        "depthBoundsTestEnable":"VK_FALSE",
+        "depthCompareOp":"VK_COMPARE_OP_LESS_OR_EQUAL",
+        "depthBoundsTestEnable":"VK_TRUE",
         "front":{
             "failOp":"VK_STENCIL_OP_KEEP",
             "passOp":"VK_STENCIL_OP_KEEP",
             "depthFailOp":"VK_STENCIL_OP_KEEP",
-            "compareOp":"VK_COMPARE_OP_LESS",
+            "compareOp":"VK_COMPARE_OP_ALWAYS",
             "compareMask":0,
             "writeMask":0,
             "reference":0
@@ -106,7 +106,7 @@
             "failOp":"VK_STENCIL_OP_KEEP",
             "passOp":"VK_STENCIL_OP_KEEP",
             "depthFailOp":"VK_STENCIL_OP_KEEP",
-            "compareOp":"VK_COMPARE_OP_LESS",
+            "compareOp":"VK_COMPARE_OP_ALWAYS",
             "compareMask":0,
             "writeMask":0,
             "reference":0
@@ -116,24 +116,24 @@
         "stencilTestEnable":"VK_FALSE"
     },
     "ColorBlend":{
-        "logicOpEnable":"VK_TRUE",
-        "logicOp":"VK_LOGIC_OP_CLEAR",
+        "logicOpEnable":"VK_FALSE",
+        "logicOp":"VK_LOGIC_OP_COPY",
         "pAttachments":[
             {
                 "blendEnable":"VK_TRUE",
                 "srcColorBlendFactor":"VK_BLEND_FACTOR_SRC_COLOR",
-                "dstColorBlendFactor":"VK_BLEND_FACTOR_DST_COLOR",
+                "dstColorBlendFactor":"VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR",
                 "colorBlendOp":"VK_BLEND_OP_ADD",
                 "srcAlphaBlendFactor":"VK_BLEND_FACTOR_SRC_ALPHA",
-                "dstAlphaBlendFactor":"VK_BLEND_FACTOR_DST_ALPHA",
+                "dstAlphaBlendFactor":"VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA",
                 "alphaBlendOp":"VK_BLEND_OP_ADD",
                 "colorWriteMask":["VK_COLOR_COMPONENT_R_BIT","VK_COLOR_COMPONENT_G_BIT",
                                   "VK_COLOR_COMPONENT_B_BIT","VK_COLOR_COMPONENT_A_BIT"]
             }
         ],
-        "blendConstants":[0.0, 0.0, 0.0, 0.0]
+        "blendConstants":[1.0, 1.0, 1.0, 1.0]
     },
-    "dynamicState":[
+    "DynamicState":[
         "VK_DYNAMIC_STATE_VIEWPORT",
         "VK_DYNAMIC_STATE_SCISSOR",
         "VK_DYNAMIC_STATE_LINE_WIDTH",

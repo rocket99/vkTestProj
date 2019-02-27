@@ -190,8 +190,7 @@ bool TKPipelineLayout::initLightPipelineLayout(){
         descSetAllocInfo.descriptorSetCount = 1;
         descSetAllocInfo.pSetLayouts = &m_descSetLayouts[i];
         vkAllocateDescriptorSets(device, &descSetAllocInfo, &m_descSets[i]);
-    }
-    
+    }    
     TKLog("init light pipeline layout!\n");
     return true;
 }
@@ -232,11 +231,12 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
     if(value.isArray() == false){
         return false;
     }
+	//TKLog("\n%s\n", value.toStyledString().c_str());
     uint32_t size = value.size();
     VkDevice device = TKBaseInfo::Info()->device;
     std::vector<VkDescriptorSetLayoutBinding> bindings;
    
-    for(int i=0; i<size; ++i){
+    for(uint32_t i=0; i<size; ++i){
         VkDescriptorSetLayoutBinding layoutBind;
         layoutBind.binding = value[i]["binding"].asUInt();
         layoutBind.descriptorCount = value[i]["descriptorCount"].asUInt();
@@ -272,7 +272,7 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         TKLog("init pipeline layout failed!\n");
         return false;
     }
-
+	TKLog("init pipeline layout success!\n");
     for(uint32_t i=0; i<swapCount; ++i){
         VkDescriptorSetAllocateInfo descSetAllocInfo;
         descSetAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;

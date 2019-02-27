@@ -6,6 +6,7 @@
 #define __TKPipelineManager_h__
 
 #include "TKPipeline.h"
+#include "TKJsonPipeline.h"
 
 class TKPipelineManager {
 public:
@@ -19,6 +20,7 @@ public:
     void prepareAllPipelines();
 private:
     std::map<std::string, TKPipeline*> pipelineDict;
+	std::map<std::string, TKJsonPipeline*>m_jsonPipelineDict;
     std::vector<TKPipeline *> allPipelines;
     void preparePipelineFromJson(const char *fileName);
     

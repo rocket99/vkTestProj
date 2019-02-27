@@ -21,15 +21,17 @@ VkBool32 TKVkUtility::VkBoolFrom(const std::string &str){
 }
 
 VkVertexInputRate TKVkUtility::VkInputRateFrom(const std::string &str){
-    if(str.compare("VK_VERTEX_INPUT_RATE_VERTEX")==0){
-        return VK_VERTEX_INPUT_RATE_VERTEX;
+	TKLog("vertex input rate: %s\n", str.c_str());
+	int ret = strcmp(str.c_str(), "VK_VERTEX_INPUT_RATE_VERTEX");
+    if(ret == 0){
+		return VK_VERTEX_INPUT_RATE_VERTEX;
     }
     return VK_VERTEX_INPUT_RATE_INSTANCE;
 }
 
 VkFormat TKVkUtility::VkFormatFrom(const std::string &formatStr){
     Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkFormat.json");
-    return VkFormat(root["VkFormat"][formatStr].asInt());
+    return VkFormat(root["VkFormat"][formatStr].asUInt());
 }
 
 VkPrimitiveTopology TKVkUtility::VkPrimitiveFrom(const std::string &str){
@@ -70,7 +72,6 @@ VkCompareOp TKVkUtility::VkCompareOpFrom(const std::string &str){
 
 VkColorComponentFlagBits TKVkUtility::VkColorComponentFlagBitFrom(const std::string &str){
     Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
-	TKLog("%s %s\n", str.c_str(), root.toStyledString().c_str());
     uint32_t value = strtoul(root["ColorComponentFlagBit"][str].asCString(), nullptr, 16);
     return VkColorComponentFlagBits(value);
 }
@@ -109,7 +110,7 @@ VkDescriptorType TKVkUtility::VkDecriptorTypeFrom(const std::string &str){
 VkShaderStageFlagBits TKVkUtility::VkShaderStageFlagBitsFrom(const std::string &str){
     Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
     uint32_t value = strtoul(root["ShaderStageFlagBit"][str].asCString(), nullptr, 16);
-    return VkShaderStageFlagBits(value);
+	return VkShaderStageFlagBits(value);
 }
 
 Json::Value TKVkUtility::VkConfigFrom(const std::string &fileName){
@@ -137,7 +138,6 @@ Json::Value TKVkUtility::VkConfigFrom(const std::string &fileName){
         reader.parse(content, root);
         m_root[fileName] = root;
         fclose(fp);
-		TKLog("%s:%s\n", fileName.c_str(), root.toStyledString().c_str());
 	}
     return m_root[fileName];
 }
