@@ -65,9 +65,7 @@ bool LightScene::initLightScene(uint32_t lightNum){
 }
 
 void LightScene::initObjects(){
-    TKPipeline *pipeline = TKPipelineManager::getTKPipeline(SHADER_NAME);
-    TKLog("light pipeline %p\n", pipeline);
-
+    TKJsonPipeline *pipeline = TKPipelineManager::getTKJsonPipeline(SHADER_NAME);
     TKGeometryObj *ground = TKGeometryObj::createRectPlane(500, 500);
     ground->setTag(1);
     ground->setPipelineToUse(pipeline);
@@ -106,43 +104,6 @@ void LightScene::initObjects(){
     Float4(1.0, 0.0, 0.0, 1.0).copyTo(sphere->backMaterial.specular);
     sphere->backMaterial.shiness = 50;
     sphere->refreshMaterial();
-    
-    /*
-    TKCylinder *cylinder = TKCylinder::createWith(100, 120);
-    cylinder->setPipelineToUse(pipeline);
-    cylinder->setPosition(0.0, -240.0, 0.0);
-    cylinder->rotateX(M_PI*0.5);
-    m_rootNode->addSubNode(cylinder);
-    cylinder->release();
-    Float4(0.4, 0.6, 0.8, 1.0).copyTo(cylinder->frontMaterial.emission);
-    Float4(0.4, 0.3, 0.0, 1.0).copyTo(cylinder->frontMaterial.ambient);
-    Float4(0.7, 0.7, 0.7, 1.0).copyTo(cylinder->frontMaterial.diffuse);
-    Float4(1.0, 1.0, 1.0, 1.0).copyTo(cylinder->frontMaterial.specular);
-    cylinder->frontMaterial.shiness = 0.6;
-    Float4(0.2, 0.5, 0.1, 1.0).copyTo(cylinder->backMaterial.emission);
-    Float4(0.0, 0.1, 0.3, 1.0).copyTo(cylinder->backMaterial.ambient);
-    Float4(0.0, 0.0, 0.0, 1.0).copyTo(cylinder->backMaterial.diffuse);
-    Float4(0.0, 0.0, 0.0, 1.0).copyTo(cylinder->backMaterial.specular);
-    cylinder->backMaterial.shiness = 0.1;
-    cylinder->refreshMaterial();
-
-    TKCube *cube = TKCube::createWithSize(200, 100, 200);
-    cube->setPipelineToUse(pipeline);
-    cube->setPosition(0.0, -130.0, 0.0);
-    m_rootNode->addSubNode(cube);
-    cube->release();
-    Float4(0.4, 0.6, 0.8, 1.0).copyTo(cube->frontMaterial.emission);
-    Float4(0.4, 0.3, 0.0, 1.0).copyTo(cube->frontMaterial.ambient);
-    Float4(0.0, 0.0, 0.0, 1.0).copyTo(cube->frontMaterial.diffuse);
-    Float4(0.0, 0.0, 0.0, 1.0).copyTo(cube->frontMaterial.specular);
-    cube->frontMaterial.shiness = 0.6;
-    Float4(0.2, 0.5, 0.1, 1.0).copyTo(cube->backMaterial.emission);
-    Float4(0.0, 0.1, 0.3, 1.0).copyTo(cube->backMaterial.ambient);
-    Float4(0.0, 0.0, 0.0, 1.0).copyTo(cube->backMaterial.diffuse);
-    Float4(0.0, 0.0, 0.0, 1.0).copyTo(cube->backMaterial.specular);
-    cube->backMaterial.shiness = 0.1;
-    cube->refreshMaterial();
-    */
 }
 
 void LightScene::drawObjects(){
@@ -158,18 +119,17 @@ void LightScene::drawObjects(){
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_eyeUniform->updateData(data, sizeof(float)*3, 0);
     
-    TKPipeline *pipeline = TKPipelineManager::getTKPipeline(SHADER_NAME);
+    TKJsonPipeline *pipeline = TKPipelineManager::getTKJsonPipeline(SHADER_NAME);
     VkDescriptorSet descSet = pipeline->descriptorSet(m_currentIdx);
     VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
     vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline());
     VkWriteDescriptorSet cameraDescSet = m_cameraUniform->writeDescSet(descSet, 0);
     VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
     VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
+	
     m_rootNode->addWriteDescSet(cameraDescSet);
-    if(strcmp(SHADER_NAME, "light") == 0){
-        m_rootNode->addWriteDescSet(lightDescSet);
-        m_rootNode->addWriteDescSet(eyeDescSet);
-    }
+	m_rootNode->addWriteDescSet(lightDescSet);
+	m_rootNode->addWriteDescSet(eyeDescSet);
     m_rootNode->draw(cmdBuf, m_currentIdx);
 
     angle += 0.25*M_PI/180.0;
@@ -180,7 +140,6 @@ void LightScene::drawObjects(){
     if(node != nullptr){
         node->rotateX(0.5*M_PI/180.0);
     }
-    
 }
 
 

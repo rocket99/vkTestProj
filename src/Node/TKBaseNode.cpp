@@ -51,7 +51,7 @@ void TKBaseNode::refreshMaterial() {
     m_backMaterialUniform->updateData(buf, sizeof(float)*17, 0);
 }
 
-void TKBaseNode::setPipelineToUse(TKPipeline *pipeline) {
+void TKBaseNode::setPipelineToUse(TKJsonPipeline *pipeline) {
     m_pipeline = pipeline;
 }
 

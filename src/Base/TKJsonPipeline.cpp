@@ -149,17 +149,13 @@ bool TKJsonPipeline::initShaderStagesFromJson(const Json::Value &value){
 			
 			break;
 		}
-		TKLog("[%d]module stage %d\n", i, stage);
 
 		std::string moduleStr = value[i]["module"].asString();
-		TKLog("[%d]module name:%s\n", i, moduleStr.c_str());
 		m_shaderStages[i].module = TKModuleManager::shaderModule(moduleStr.c_str());
 		if(m_shaderStages[i].module == VK_NULL_HANDLE){
 			TKLog("shader module error!\n");
 		}
-        m_stageName.push_back(value[i]["pName"].asString());
 		m_shaderStages[i].pName = "main";
-		TKLog("[%d]pName: %s\n", i, m_shaderStages[i+1].pName);
         m_shaderStages[i].pSpecializationInfo = nullptr;
 	}
 

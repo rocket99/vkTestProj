@@ -310,7 +310,7 @@ void TKPipeline::initDynamicState(){
 }
 
 void TKPipeline::initPipelineLayout(const std::string &name){
-    m_pipelineLayout = TKPipelineLayout::createPipelineLayout(name);
+	// m_pipelineLayout = TKPipelineLayout::createPipelineLayout(name);
 }
 
 VkPipeline TKPipeline::pipeline() const {

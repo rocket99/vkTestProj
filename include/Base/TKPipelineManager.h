@@ -15,13 +15,13 @@ public:
     static TKPipelineManager *manager();
     static void purge();
     static VkPipeline getPipeline(const std::string &pipelineName);
-    static TKPipeline *getTKPipeline(const std::string &pipelineName); 
-    static void addNewPipeline(TKPipeline *pipeline, std::string name);
+    static TKJsonPipeline *getTKJsonPipeline(const std::string &pipelineName); 
+    static void addNewPipeline(TKJsonPipeline *pipeline, std::string name);
     void prepareAllPipelines();
 private:
-    std::map<std::string, TKPipeline*> pipelineDict;
-	std::map<std::string, TKJsonPipeline*>m_jsonPipelineDict;
-    std::vector<TKPipeline *> allPipelines;
+    //std::map<std::string, TKPipeline*> pipelineDict;
+	std::map<std::string, TKJsonPipeline*>pipelineMap;
+    std::vector<TKJsonPipeline *> allPipelines;
     void preparePipelineFromJson(const char *fileName);
     
     void prepareBasicPipeline();

@@ -8,7 +8,7 @@
 #include "TKObject.h"
 #include "TKDataDef.h"
 #include "../Base/TKUniform.h"
-#include "../Base/TKPipeline.h"
+#include "../Base/TKJsonPipeline.h"
 
 
 class TKNodeList {
@@ -44,7 +44,8 @@ public:
     TKBaseNode *parentNode() const;
     TKBaseNode *subNodeWithTag(uint32_t tag);
     
-    void setPipelineToUse(TKPipeline *pipeline);
+    void setPipelineToUse(TKJsonPipeline *pipeline);
+	
     TKMaterial frontMaterial;
     TKMaterial backMaterial;
     void refreshMaterial();
@@ -54,18 +55,7 @@ public:
 protected:
     TKNodeList *m_subList;   
     TKBaseNode *m_parentNode;    
-    /*
-    uint32_t       m_verticeNum    = 0;
-    TKVertice     *m_vertices      = nullptr;
-    VkBuffer       m_vertexBuffer  = VK_NULL_HANDLE;
-    VkDeviceMemory m_vertexMemory  = VK_NULL_HANDLE;
-    uint32_t      *m_verticeIdx    = nullptr;
-    uint32_t       m_indexNum      = 0;
-    VkBuffer       m_indexBuffer   = VK_NULL_HANDLE;
-    VkDeviceMemory m_indexMemory   = VK_NULL_HANDLE;
-    virtual void setVertexBuffer();
-    virtual void setIndexBuffer();
-    */
+    
     std::vector<VkWriteDescriptorSet> m_writeDescSets;
     std::vector<VkCopyDescriptorSet>  m_copyDescSets;
     
@@ -80,7 +70,7 @@ protected:
     
     void updateTransform();
 
-    TKPipeline *m_pipeline;
+    TKJsonPipeline *m_pipeline;
     uint32_t  m_drawIdx;
     virtual void bindUniforms(uint32_t swapIdx);    
 };

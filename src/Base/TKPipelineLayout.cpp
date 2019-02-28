@@ -19,7 +19,7 @@ TKPipelineLayout::~TKPipelineLayout(){
         vkDestroyPipelineLayout(device, m_layout, nullptr);
     }
 }
-
+/*
 TKPipelineLayout *TKPipelineLayout::createPipelineLayout(const std::string &name){
     TKPipelineLayout *layout = new TKPipelineLayout;
     if(layout->initPipelineLayout(name) == false){
@@ -60,14 +60,6 @@ bool TKPipelineLayout::initBasicPipelineLayout(){
     bind1.pImmutableSamplers = nullptr;
     bindings.push_back(bind1);
 
-    VkDescriptorSetLayoutBinding bind2;
-    bind2.binding = 2;
-    bind2.descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    bind2.descriptorCount = 1;
-    bind2.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
-    bind2.pImmutableSamplers = nullptr;
-    //    bindings.push_back(bind2);
-    
     uint32_t swapCount = TKBaseInfo::Info()->swapchainImageViews.size();
     m_descSets.resize(swapCount);
     m_descSetLayouts.resize(swapCount);
@@ -194,7 +186,7 @@ bool TKPipelineLayout::initLightPipelineLayout(){
     TKLog("init light pipeline layout!\n");
     return true;
 }
-
+*/
 VkPipelineLayout TKPipelineLayout::pipelineLayout() const {
     return m_layout;
 }
@@ -231,7 +223,7 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
     if(value.isArray() == false){
         return false;
     }
-	//TKLog("\n%s\n", value.toStyledString().c_str());
+	
     uint32_t size = value.size();
     VkDevice device = TKBaseInfo::Info()->device;
     std::vector<VkDescriptorSetLayoutBinding> bindings;
