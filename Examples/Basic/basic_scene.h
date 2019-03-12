@@ -6,6 +6,7 @@
 #define __Basic_Scene_h__
 
 #include "TKEngine.h"
+#include "Base/TKJsonPipeline.h"
 
 class BasicScene:public TKScene
 {
@@ -19,7 +20,7 @@ protected:
     void drawObjects();
 private:
     float theta = 0.0f;
-    
+    TKJsonPipeline *m_pipeline;
     TKCamera *m_camera;
     Float3 m_spaceSize;
     TKUniform *m_uniform;

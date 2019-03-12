@@ -20,15 +20,11 @@ int main(int argc, char *argv[])
     TKBaseInfo::share()->initCommandPool();
     TKBaseInfo::share()->initDescriptorPool();
     TKBaseInfo::share()->initFencesAndSemaphores();
-
-    
-    TKPipelineManager::manager()->prepareAllPipelines();
     
     BasicScene *mainScene = BasicScene::createScene(SCREEN_WIDTH, SCREEN_HEIGHT);
     window->setScene(mainScene);
     window->startRefresh();
 
-    TKPipelineManager::purge();
     TKModuleManager::purge();
     delete window;
     

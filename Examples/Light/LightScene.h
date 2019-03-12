@@ -17,7 +17,6 @@ public:
     
 protected:
     void drawObjects();
-
 private:
     void initObjects();
     Float3 m_spaceSize;
@@ -28,6 +27,8 @@ private:
     TKUniform *m_lightUniform;
     TKUniform *m_eyeUniform;
     float angle;
+
+	TKJsonPipeline *m_pipeline;
 };
 
 #endif

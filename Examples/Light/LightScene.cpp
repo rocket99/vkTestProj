@@ -26,11 +26,14 @@ bool LightScene::initLightScene(uint32_t lightNum){
         return false;
     }
 
-    m_rootNode = new TKBaseNode;
+    m_rootNode = TKGeometryObj::createSphere(200);
     if(m_rootNode->initialize() == false){
         delete m_rootNode; 
     }
-    
+
+	m_pipeline = TKJsonPipeline::createFromJson("light_pipeline.json");
+	m_rootNode->setPipelineToUse(m_pipeline);
+	
     m_spaceSize = Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_camera = TKCamera::createWithLookat(Float3(0.0, 0.0, 0.0),
                                           Float3(0.0, 0.0, -500),
@@ -56,8 +59,7 @@ bool LightScene::initLightScene(uint32_t lightNum){
     m_lightUniform = TKUniform::createWithSize(sizeof(float)*26);
     float buf[26]; m_lightSources[0].mapToBuffer(buf);
     m_lightUniform->updateData(buf, sizeof(float)*26, 0);
-    
-    this->initObjects();
+
     angle = 0.0;
     
     TKLog("init light scene ok!\n");
@@ -65,10 +67,9 @@ bool LightScene::initLightScene(uint32_t lightNum){
 }
 
 void LightScene::initObjects(){
-    TKJsonPipeline *pipeline = TKPipelineManager::getTKJsonPipeline(SHADER_NAME);
     TKGeometryObj *ground = TKGeometryObj::createRectPlane(500, 500);
     ground->setTag(1);
-    ground->setPipelineToUse(pipeline);
+    ground->setPipelineToUse(m_pipeline);
     ground->setPosition(0.0, 0.0, 0.0);
     ground->rotateX(M_PI*0.5);
     m_rootNode->addSubNode(ground);
@@ -87,7 +88,7 @@ void LightScene::initObjects(){
     
     TKGeometryObj *sphere = TKGeometryObj::createSphere(100);
     sphere->setTag(2);
-    sphere->setPipelineToUse(pipeline);
+    sphere->setPipelineToUse(m_pipeline);
     sphere->setPosition(0.0, 100, 0.0);
     sphere->rotateX(M_PI*0.5);
     m_rootNode->addSubNode(sphere);
@@ -118,20 +119,18 @@ void LightScene::drawObjects(){
     Float3 eyePos = m_camera->getPosition();
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_eyeUniform->updateData(data, sizeof(float)*3, 0);
-    
-    TKJsonPipeline *pipeline = TKPipelineManager::getTKJsonPipeline(SHADER_NAME);
-    VkDescriptorSet descSet = pipeline->descriptorSet(m_currentIdx);
+
+	VkDescriptorSet descSet = m_pipeline->descriptorSet(m_currentIdx);
     VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
-    vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline());
+    
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline->pipeline());	
     VkWriteDescriptorSet cameraDescSet = m_cameraUniform->writeDescSet(descSet, 0);
-    VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
-    VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
-	
     m_rootNode->addWriteDescSet(cameraDescSet);
+	VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
+    VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
 	m_rootNode->addWriteDescSet(lightDescSet);
 	m_rootNode->addWriteDescSet(eyeDescSet);
     m_rootNode->draw(cmdBuf, m_currentIdx);
-
     angle += 0.25*M_PI/180.0;
     m_camera->setPosition(600.0*cos(angle), 400.0, 600.0*sin(angle));
     m_camera->updateUniformData();

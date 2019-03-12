@@ -187,7 +187,8 @@ void TKBaseNode::displayRotateMatrix() const {
 }
 
 void TKBaseNode::draw(VkCommandBuffer cmdBuf, uint32_t swapIdx){
-    TKNodeList *lst = m_subList->next;
+	TKLog("tkBaseNode draw!\n");
+	TKNodeList *lst = m_subList->next;
     while(lst != nullptr){
         static_cast<TKBaseNode *>(lst->node)->draw(cmdBuf, swapIdx);
         lst = lst->next;
@@ -222,6 +223,7 @@ void TKBaseNode::bindUniforms(uint32_t swapIdx){
         }
         
         if(name.compare("light") == 0){
+			TKLog("bind uniform light pipeline\n");
             this->updateTransform();
             m_writeDescSets.push_back(m_tranUniform->writeDescSet(descSet, 5));
             m_writeDescSets.push_back(m_basicUniform->writeDescSet(descSet, 1));

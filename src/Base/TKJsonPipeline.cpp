@@ -51,6 +51,7 @@ bool TKJsonPipeline::initWithJsonFile(const char *fileName){
     }
 
 	TKLog("init pipeline from json start!\n");
+	m_name = root["name"].asString();	
     this->initShaderStagesFromJson(root["ShaderStages"]);
     this->initVertexInputStateFromJson(root["VertexInput"]);
     this->initAssembleStateFromJson(root["InputAssemble"]);
@@ -61,50 +62,22 @@ bool TKJsonPipeline::initWithJsonFile(const char *fileName){
     this->initDepthStencilStateFromJson(root["DepthStencil"]);
     this->initMultiSampleStateFromJson(root["MultiSample"]);
     this->initDynamicStateFromJson(root["DynamicState"]);
-	
     this->initPipelineLayoutFromJson(root["layout"]); 
-    this->initPipeline(root["name"].asString());
 
-	TKLog("init pipeline %s success\n", m_name.c_str());
-    return true;
-}
-
-bool TKJsonPipeline::initPipeline(const std::string &name){
-	m_name = name;
-    VkGraphicsPipelineCreateInfo pipelineInfo;
+	VkGraphicsPipelineCreateInfo pipelineInfo;
     pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.pNext               = nullptr;
     pipelineInfo.flags               = 0;
-	
-	this->debugShaderStageState();
     pipelineInfo.stageCount          = m_shaderStages.size();
     pipelineInfo.pStages             = m_shaderStages.data();
-
-	//this->debugVertexInputState();
     pipelineInfo.pVertexInputState   = &m_vertInputState;
-
-	//this->debugInputAssemblyState();
 	pipelineInfo.pInputAssemblyState = &m_assembleState;
-
-	//this->debugTessellationState(); 
     pipelineInfo.pTessellationState  = &m_tesslState;
-
-	//this->debugViewportState();
 	pipelineInfo.pViewportState      = &m_viewportState;
-
-	//this->debugRasterizationState();
     pipelineInfo.pRasterizationState = &m_rasterState;
-
-	//this->debugMultiSampleState();
     pipelineInfo.pMultisampleState   = &m_mulSampleState;
-
-	//this->debugDepthStencilState();
 	pipelineInfo.pDepthStencilState  = &m_depthStencil;
-
-	//this->debugColorBlendState();
 	pipelineInfo.pColorBlendState    = &m_colorBlendState;
-
-	//this->debugDynamicState();
 	pipelineInfo.pDynamicState       = &m_dynamicState;
     pipelineInfo.layout              = m_pipelineLayout->pipelineLayout();
     pipelineInfo.renderPass          = TKBaseInfo::Info()->renderPass;
@@ -112,15 +85,15 @@ bool TKJsonPipeline::initPipeline(const std::string &name){
     pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex   = -1;
 
-	TKLog("init pipeline %s\n", m_name.c_str());
     VkResult ret = vkCreateGraphicsPipelines(TKBaseInfo::Info()->device, VK_NULL_HANDLE,
                                              1, &pipelineInfo, nullptr, &m_pipeline);
 	if (ret != VK_SUCCESS) {
-        printf("init pipeline failed! ret= %d\n", ret);
+        printf("init pipeline failed! ret = %d\n", ret);
         return false;
     }
-    TKLog("init pipeline success!\n");    
-    return true;
+	TKLog("init pipeline %s success\n", m_name.c_str());
+
+	return true;
 }
 
 bool TKJsonPipeline::initShaderStagesFromJson(const Json::Value &value){
@@ -131,9 +104,7 @@ bool TKJsonPipeline::initShaderStagesFromJson(const Json::Value &value){
 
 	m_stageName.clear();
     m_shaderStages.resize(value.size());
-	TKLog("shader stage count %d.\n", value.size());
     for(uint i=0; i<value.size(); ++i){
-	
         m_shaderStages[i].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         m_shaderStages[i].pNext = nullptr;
 		m_shaderStages[i].flags = 0;
@@ -343,23 +314,11 @@ bool TKJsonPipeline::initColorBlendStateFromJson(const Json::Value &value){
 			std::string dstAlphaFactor = tmp["dstAlphaBlendFactor"].asString();
             m_blendAttachArr[i].dstAlphaBlendFactor = TKVkUtility::VkBlendFactorFrom(dstAlphaFactor);
 			m_blendAttachArr[i].colorBlendOp = TKVkUtility::VkBlendOpFrom(tmp["colorBlendOp"].asString());
-			m_blendAttachArr[i].alphaBlendOp = TKVkUtility::VkBlendOpFrom(tmp["alphaBlendOp"].asString());
-			/*
-			if(tmp["colorWriteMask"].isArray()==true){
-				       std::string str = tmp["colorWriteMask"][0].asString();
-                VkColorComponentFlagBits flag = TKVkUtility::VkColorComponentFlagBitFrom(str);
-                for(uint32_t j=1; j<tmp["colorWriteMask"].size(); ++j){
-                    str = tmp["colorWriteMask"][j].asString();
-					flag = flag | TKVkUtility::VkColorComponentFlagBitFrom(str);
-                }
-                m_blendAttachArr[i].colorWriteMask = flag;
-				}else{
-			*/              
+			m_blendAttachArr[i].alphaBlendOp = TKVkUtility::VkBlendOpFrom(tmp["alphaBlendOp"].asString());           
 			m_blendAttachArr[i].colorWriteMask =
 				VK_COLOR_COMPONENT_R_BIT|VK_COLOR_COMPONENT_G_BIT|
 				VK_COLOR_COMPONENT_B_BIT|VK_COLOR_COMPONENT_A_BIT;
-			// }
-        }
+		}
     }
     m_colorBlendState.attachmentCount    = m_blendAttachArr.size();
     m_colorBlendState.pAttachments       = m_blendAttachArr.data();
@@ -435,8 +394,9 @@ void TKJsonPipeline::debugShaderStageState(){
 	}
 	Json::StyledWriter writer;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["shaderStage"] = value;
 }
+
 void TKJsonPipeline::debugVertexInputState(){
 	Json::Value value;
 	Json::StyledWriter writer;
@@ -453,7 +413,7 @@ void TKJsonPipeline::debugVertexInputState(){
 	}
 	value["type"] = m_vertInputState.sType;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["vertexInput"] = value;
 }
 
 void TKJsonPipeline::debugInputAssemblyState(){
@@ -463,7 +423,7 @@ void TKJsonPipeline::debugInputAssemblyState(){
 	value["primitive"] = m_assembleState.primitiveRestartEnable;
 
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["inputAssemble"] = value;
 }
 
 void TKJsonPipeline::debugTessellationState(){
@@ -471,7 +431,7 @@ void TKJsonPipeline::debugTessellationState(){
 	Json::StyledWriter writer;
 	value["patchControlPoints"] = m_tesslState.patchControlPoints;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["tessellation"] = value;
 }
 
 void TKJsonPipeline::debugViewportState(){
@@ -494,7 +454,7 @@ void TKJsonPipeline::debugViewportState(){
 		value["scissors"][i]["extent"]["height"] = m_viewportState.pScissors[i].extent.height;
 	}
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["viewport"] = value;
 }
 
 void TKJsonPipeline::debugRasterizationState(){
@@ -510,7 +470,7 @@ void TKJsonPipeline::debugRasterizationState(){
 	value["depthBiasSlopeFactor"] = m_rasterState.depthBiasSlopeFactor;
 	value["lineWidth"] = m_rasterState.lineWidth;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["rasterization"] = value;
 }
 
 void TKJsonPipeline::debugMultiSampleState(){
@@ -522,7 +482,7 @@ void TKJsonPipeline::debugMultiSampleState(){
 	value["alphaToCoverageEnable"] = m_mulSampleState.alphaToCoverageEnable;
 	value["alphaToOneEnable"] = m_mulSampleState.alphaToOneEnable;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["multiSample"] = value;
 }
 
 void TKJsonPipeline::debugDepthStencilState(){
@@ -552,7 +512,7 @@ void TKJsonPipeline::debugDepthStencilState(){
 	value["back"]["writeMask"] = m_depthStencil.front.writeMask;
 	value["back"]["reference"] = m_depthStencil.front.reference;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["depthStencil"] = value;
 }
 
 void TKJsonPipeline::debugColorBlendState(){
@@ -576,7 +536,7 @@ void TKJsonPipeline::debugColorBlendState(){
 	value["blendConstant"][3] = m_colorBlendState.blendConstants[3];
 	Json::StyledWriter writer;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["coloeBlend"] = value;
 }
 
 void TKJsonPipeline::debugDynamicState(){
@@ -586,5 +546,21 @@ void TKJsonPipeline::debugDynamicState(){
 	}
 	Json::StyledWriter writer;
 	std::string str = writer.write(value);
-	TKLog("\n%s\n", str.c_str());
+	m_debugInfoJson["dynamic"] = value;
+}
+
+void TKJsonPipeline::debugPipeline(){
+	this->debugShaderStageState();
+	this->debugVertexInputState();
+	this->debugInputAssemblyState();
+	this->debugTessellationState();
+	this->debugViewportState();
+	this->debugRasterizationState();
+	this->debugMultiSampleState();
+	this->debugDepthStencilState();
+	this->debugColorBlendState();
+	this->debugDynamicState();
+	Json::StyledWriter writer;
+	std::string str = writer.write(m_debugInfoJson);
+	TKLog("pipeline %s info:\n%s\n", m_name.c_str(), str.c_str());
 }

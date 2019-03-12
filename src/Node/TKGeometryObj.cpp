@@ -423,34 +423,38 @@ void TKGeometryObj::setIndexBuffer() {
 
 
 void TKGeometryObj::draw(VkCommandBuffer cmdBuf, uint32_t swapIdx){
+	TKLog("draw 1\n");
     if(m_pipeline != nullptr && m_pointNum>0 && m_indexNum>0){
-         void *pData;
-         VkDeviceSize commitBytes;
-         VkDevice device = TKBaseInfo::Info()->device;
-         vkGetDeviceMemoryCommitment(device, m_vertexMemory, &commitBytes);
-         vkMapMemory(device, m_vertexMemory, 0, commitBytes, 0, &pData);
-         memcpy(pData, m_points, sizeof(TKVertice)*m_pointNum);
-         vkUnmapMemory(device, m_vertexMemory);
+		TKLog("draw 2 point num = %d, index num = %d\n", m_pointNum, m_indexNum);
+		void *pData;
+		VkDeviceSize commitBytes;
+		VkDevice device = TKBaseInfo::Info()->device;
+		vkGetDeviceMemoryCommitment(device, m_vertexMemory, &commitBytes);
+		vkMapMemory(device, m_vertexMemory, 0, commitBytes, 0, &pData);
+		memcpy(pData, m_points, sizeof(TKVertice)*m_pointNum);
+		vkUnmapMemory(device, m_vertexMemory);
          
-         vkGetDeviceMemoryCommitment(device, m_indiceMemory, &commitBytes);
-         vkMapMemory(device, m_indiceMemory, 0, commitBytes, 0, &pData);
-         memcpy(pData, m_indices, sizeof(uint32_t)*m_indexNum);
-         vkUnmapMemory(device, m_indiceMemory);
-
-         this->bindUniforms(swapIdx);
-         VkPipelineLayout layout = m_pipeline->pipelineLayout();
-         VkDescriptorSet descSet = m_pipeline->descriptorSet(m_drawIdx);
-         vkUpdateDescriptorSets(device, m_writeDescSets.size(), m_writeDescSets.data(),
-                                m_copyDescSets.size(), m_copyDescSets.data());
-         vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                 layout, 0, 1, &descSet, 0, nullptr);
+		vkGetDeviceMemoryCommitment(device, m_indiceMemory, &commitBytes);
+		vkMapMemory(device, m_indiceMemory, 0, commitBytes, 0, &pData);
+		memcpy(pData, m_indices, sizeof(uint32_t)*m_indexNum);
+		vkUnmapMemory(device, m_indiceMemory);
+		
+		this->bindUniforms(swapIdx);
+		VkPipelineLayout layout = m_pipeline->pipelineLayout();
+		VkDescriptorSet descSet = m_pipeline->descriptorSet(m_drawIdx);
+		vkUpdateDescriptorSets(device, m_writeDescSets.size(), m_writeDescSets.data(),
+							   m_copyDescSets.size(), m_copyDescSets.data());
+		vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS,
+								layout, 0, 1, &descSet, 0, nullptr);
          
-         VkDeviceSize offsets[] = {0, sizeof(float)*3, sizeof(float)*6, sizeof(float)*10};   
-         vkCmdBindVertexBuffers(cmdBuf, 0, 1, &m_pointBuffer, offsets);
-         vkCmdBindIndexBuffer(cmdBuf, m_indiceBuffer, 0, VK_INDEX_TYPE_UINT32);
-         vkCmdDrawIndexed(cmdBuf, m_indexNum, 1, 0, 0, 0);
-         m_writeDescSets.empty();
+		VkDeviceSize offsets[] = {0, sizeof(float)*3, sizeof(float)*6, sizeof(float)*10};   
+		vkCmdBindVertexBuffers(cmdBuf, 0, 1, &m_pointBuffer, offsets);
+		vkCmdBindIndexBuffer(cmdBuf, m_indiceBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdDrawIndexed(cmdBuf, m_indexNum, 1, 0, 0, 0);
+		m_writeDescSets.empty();
+		TKLog("TKGeometryObj draw!\n");
     }
+	
     TKNodeList *lst = m_subList->next;
     while(lst != nullptr){
         TKGeometryObj *obj = static_cast<TKGeometryObj *>(lst->node);

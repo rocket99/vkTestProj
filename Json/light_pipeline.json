@@ -69,7 +69,7 @@
         ]
     },
     "Rasterization":{
-        "depthClampEnable":"VK_TRUE",
+        "depthClampEnable":"VK_FALSE",
         "rasterDiscard":"VK_FALSE",
         "polygonMode":"VK_POLYGON_MODE_FILL",
         "cullMode":"VK_CULL_MODE_NONE",
@@ -92,7 +92,7 @@
         "depthTestEnable":"VK_FALSE",
         "depthWriteEnable":"VK_TRUE",
         "depthCompareOp":"VK_COMPARE_OP_LESS_OR_EQUAL",
-        "depthBoundsTestEnable":"VK_TRUE",
+        "depthBoundsTestEnable":"VK_FALSE",
         "front":{
             "failOp":"VK_STENCIL_OP_KEEP",
             "passOp":"VK_STENCIL_OP_KEEP",

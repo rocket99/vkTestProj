@@ -80,10 +80,10 @@ void TKBaseInfo::enumeratePhysicalDevices(){
     std::vector<VkPhysicalDevice> physicalDevices(deviceCount);
     vkEnumeratePhysicalDevices(m_info->instance, &deviceCount, physicalDevices.data());
 
-    for(int i=0; i<physicalDevices.size(); ++i){
+    for(uint32_t i=0; i<physicalDevices.size(); ++i){
         VkPhysicalDeviceProperties property;
         vkGetPhysicalDeviceProperties(physicalDevices[i], &property);
-        /*
+        
         TKLog("[%d]Device ID 0x%x\n", i, property.deviceID);
         TKLog("[%d]Driver Version: %d\n", i, property.driverVersion);
         TKLog("[%d]Device name: %s\n", i, property.deviceName);
@@ -91,7 +91,7 @@ void TKBaseInfo::enumeratePhysicalDevices(){
         TKLog("[%d]API version: %d.%d.%d\n",i, (property.apiVersion>>22)&0x3FF,
               (property.apiVersion>>12)&0x3FF, (property.apiVersion&0xFFF));
         TKLog("[%d]limit color attachments: %d\n", i, property.limits.maxColorAttachments);
-        */
+        
         if(property.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU){
             TKLog("gpu device %s\n", property.deviceName);
             m_info->physicalDevice = physicalDevices[i];
@@ -216,7 +216,7 @@ void TKBaseInfo::setGraphicsQueueIndex(){
     */
     VkBool32 graphicsQueueFound = VK_FALSE;
     uint32_t graphicsQueueFamily = 0;
-    for(int i=0; i<queueFamilyCount; ++i){
+    for(uint32_t i=0; i<queueFamilyCount; ++i){
         if(queueFamilyProperties[i].queueCount>0 &&
            queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT){
             graphicsQueueFamily = i;
@@ -239,7 +239,7 @@ void TKBaseInfo::setPresentQueueIndex(){
     vkGetPhysicalDeviceQueueFamilyProperties(m_info->physicalDevice, &queueFamilyCount,
                                              queueFamilyProperties.data());
     VkBool32 *supportsPresent = (VkBool32*)malloc(sizeof(VkBool32)*queueFamilyCount);
-    for(int i=0; i<queueFamilyCount; ++i){         
+    for(uint32_t i=0; i<queueFamilyCount; ++i){         
         vkGetPhysicalDeviceSurfaceSupportKHR(m_info->physicalDevice, i,
                                              m_info->surface, &supportsPresent[i]);
     }
@@ -330,7 +330,7 @@ void TKBaseInfo::initSwapchain() {
     vkGetSwapchainImagesKHR(m_info->device, m_info->swapchain, &imageCount,
                             m_info->swapchainImages.data());
     m_info->swapchainImageViews.resize(imageCount);
-    for (int i=0; i<imageCount; ++i) {
+    for (uint32_t i=0; i<imageCount; ++i) {
         VkImageViewCreateInfo createInfo;
         createInfo.sType        = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         createInfo.pNext        = nullptr;
@@ -367,8 +367,8 @@ void TKBaseInfo::initFramebuffers(){
     uint32_t colorAttachCount = m_info->colorAttachmentCount;
     std::vector<VkImageView> attachments(colorAttachCount+1);
     m_info->framebuffers.resize(m_info->swapchainImageViews.size());
-    for(int i=0; i<m_info->swapchainImageViews.size();++i){
-        for(int j=0; j<colorAttachCount; ++j){
+    for(uint32_t i=0; i<m_info->swapchainImageViews.size();++i){
+        for(uint32_t j=0; j<colorAttachCount; ++j){
             attachments[j]        = m_info->swapchainImageViews[i];
         }
         attachments[colorAttachCount] = m_info->depthImageview;
@@ -423,7 +423,7 @@ void TKBaseInfo::initRenderPass(){
 void TKBaseInfo::initFencesAndSemaphores(){
     uint32_t count = m_info->framebuffers.size();
     m_info->fences.resize(count);
-    for(int i=0; i<count; ++i){
+    for(uint32_t i=0; i<count; ++i){
         VkFenceCreateInfo fenceInfo;
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.pNext = nullptr;
@@ -503,7 +503,7 @@ void TKBaseInfo::displayDeviceLayers(){
     vkEnumerateDeviceExtensionProperties(m_info->physicalDevice, nullptr,
                                          &extensionCount, extensionProperties.data());
     TKLog("device extensions:\n");
-    for(int i=0; i<extensionCount; ++i){
+    for(uint32_t i=0; i<extensionCount; ++i){
         TKLog("extension: %s, spec ver %d\n", extensionProperties[i].extensionName,
               extensionProperties[i].specVersion);
     }

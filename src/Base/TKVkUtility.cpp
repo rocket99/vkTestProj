@@ -21,7 +21,6 @@ VkBool32 TKVkUtility::VkBoolFrom(const std::string &str){
 }
 
 VkVertexInputRate TKVkUtility::VkInputRateFrom(const std::string &str){
-	TKLog("vertex input rate: %s\n", str.c_str());
 	int ret = strcmp(str.c_str(), "VK_VERTEX_INPUT_RATE_VERTEX");
     if(ret == 0){
 		return VK_VERTEX_INPUT_RATE_VERTEX;
@@ -103,7 +102,9 @@ VkDynamicState TKVkUtility::VkDynamicStateFrom(const std::string &str){
 }
 
 VkDescriptorType TKVkUtility::VkDecriptorTypeFrom(const std::string &str){
+	TKLog("descriptor type %s\n", str.c_str());
     Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+	
     return VkDescriptorType(root["DescriptorType"][str].asUInt());
 }
 

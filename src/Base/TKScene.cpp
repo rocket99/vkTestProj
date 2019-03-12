@@ -4,7 +4,6 @@
 
 #include "TKScene.h"
 #include "TKBaseInfo.h"
-#include "TKPipelineManager.h"
 #include <unistd.h>
 
 TKScene::TKScene() {
@@ -90,7 +89,7 @@ void TKScene::updateDrawCommand(){
     beginInfo.framebuffer = TKBaseInfo::Info()->framebuffers[m_currentIdx];
     beginInfo.renderArea  = { {0, 0}, {SCREEN_WIDTH, SCREEN_HEIGHT} };
     std::vector<VkClearValue> clearValues(2);
-	const float values[] = {0.5, 0.5, 0.5, 1.0};
+	const float values[] = {0.5, 0.65, 0.75, 1.0};
     memcpy(clearValues[0].color.float32, values, sizeof(float)*4);
     clearValues[1].depthStencil.depth = 1.0f;
     clearValues[1].depthStencil.stencil = 0.0f;
@@ -99,7 +98,7 @@ void TKScene::updateDrawCommand(){
     vkCmdBeginRenderPass(TKBaseInfo::Info()->commandBuffers[m_currentIdx],
                          &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-    VkViewport viewport = {0, float(m_height), float(m_width), -float(m_height), 0.0, 1.0};
+    VkViewport viewport = {0, 0, float(m_width), float(m_height), 0.0, 1.0};
     VkRect2D rect = {{0, 0}, {m_width, m_height}};
     vkCmdSetViewport(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 0, 1, &viewport);
     vkCmdSetScissor(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 0, 1, &rect);
@@ -141,15 +140,14 @@ void TKScene::drawObjects(){
 }
 
 void TKScene::renderDraw(){
-    VkResult result;
+	vkWaitForFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx], VK_TRUE, 200);
+   
+	VkResult result;
     do{
         result = vkAcquireNextImageKHR(TKBaseInfo::Info()->device, TKBaseInfo::Info()->swapchain,
                                        UINT64_MAX, TKBaseInfo::Info()->graphicsSemaphore[m_frameIdx],
                                        VK_NULL_HANDLE, &m_currentIdx);
-        // TKLog("result %x\n", result);
     }while(result != VK_SUCCESS);
-    //TKLog("frame idx: %d, current idx = %d\n", m_frameIdx, m_currentIdx);
-
     this->updateDrawCommand();
     //submit
     VkSubmitInfo submitInfo;
@@ -170,7 +168,6 @@ void TKScene::renderDraw(){
         TKLog("queue submit failed! Error: %d\n", ret);
     }
 
-    vkWaitForFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx], VK_TRUE, 200);
     vkResetFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx]);
  
     //present 

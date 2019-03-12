@@ -89,30 +89,49 @@ void TKWindow::initInstance() {
     appInfo.applicationVersion  = 1;
     appInfo.pEngineName         = "TKEngine";
     appInfo.engineVersion       = 1;
-    appInfo.apiVersion          = VK_API_VERSION_1_1;
+    appInfo.apiVersion          = VK_API_VERSION_1_0;
 
     VkInstanceCreateInfo info;
     info.sType                  = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     info.pNext                  = nullptr;
     info.flags                  = 0;
     info.pApplicationInfo       = &appInfo;
-    std::vector<const char *> enabledLayers;
+    std::vector<const char *> enabledLayers = {
+		"VK_LAYER_LUNARG_core_validation",
+		//"VK_LAYER_LUNARG_vktrace",
+		"VK_LAYER_LUNARG_standard_validation"
+	};
+	/*
     for(uint32_t i=0; i<layerCount; ++i){
-        if(strcmp(layerProps[i].layerName, "VK_LAYER_LUNARG_device_simulation")){
+        if(strcmp(layerProps[i].layerName, "VK_LAYER_LUNARG_device_simulation")==0){
             continue;
         }
         enabledLayers.push_back(layerProps[i].layerName);
-    }
-    
+		}*/
     info.enabledLayerCount      = enabledLayers.size();
     info.ppEnabledLayerNames    = enabledLayers.data();
-    std::vector<const char *> enabledExtensions;
+    std::vector<const char *> enabledExtensions = {
+		"VK_KHR_surface", "VK_KHR_xcb_surface",
+		//"VK_KHR_display_surface_counter"
+		//"VK_KHR_debug_report"
+	};
+	/*
     for(uint32_t i=0; i<instExtensionCount; ++i){
         enabledExtensions.push_back(instExtensions[i].extensionName);
-    }
+		}*/
 	info.enabledExtensionCount   = enabledExtensions.size();
     info.ppEnabledExtensionNames = enabledExtensions.data();
 
+	printf("enabled layers:\n");
+	for(uint32_t i=0; i<enabledLayers.size(); ++i){
+		printf("\t%s\n", enabledLayers[i]);
+	}
+	printf("enabled extensions:\n");
+	for(uint32_t i=0; i<enabledExtensions.size(); ++i){
+		printf("\t%s\n", enabledExtensions[i]);
+	}
+	
+	
     VkResult result = vkCreateInstance(&info, nullptr, &TKBaseInfo::Info()->instance);
     if(result != VK_SUCCESS){
         TKLog("create vulkan instance failed! ERROR: %d\n", result);
@@ -167,7 +186,6 @@ void TKWindow::initSurface(){
 
 void TKWindow::startRefresh() {
     TKLog("start refresh!\n");
-   
     xcb_generic_event_t *event = nullptr;
     xcb_flush(m_connection);
      while(m_isRunning==true){ 

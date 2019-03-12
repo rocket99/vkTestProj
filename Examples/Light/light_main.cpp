@@ -13,22 +13,20 @@ int main(int argc, char *argv[])
     window->initSurface();
     
     TKBaseInfo::share()->initDevice();
-    TKModuleManager::prepareAllModules();
+    
     TKBaseInfo::share()->initSwapchain();
     TKBaseInfo::share()->initRenderPass();
     TKBaseInfo::share()->initFramebuffers();
     TKBaseInfo::share()->initCommandPool();
     TKBaseInfo::share()->initDescriptorPool();
     TKBaseInfo::share()->initFencesAndSemaphores();
-    
-    TKPipelineManager::manager()->prepareAllPipelines();
-    
+
+	TKModuleManager::prepareAllModules();
     LightScene *mainScene = LightScene::createLightScene(1);
     window->setScene(mainScene);
     window->startRefresh();
 
-    TKPipelineManager::purge();
-    TKModuleManager::purge();
+	TKModuleManager::purge();
     delete window;
     
     TKObjectPool::sharedPool()->stopWatch();
