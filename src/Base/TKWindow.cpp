@@ -222,7 +222,7 @@ void TKWindow::startRefresh() {
                 m_scene->stopDraw();
             }
         }
-        usleep(5000);
+        usleep(1000000);
     }
     
     TKLog("refresh end!\n");

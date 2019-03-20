@@ -13,7 +13,7 @@ TKScene::TKScene() {
 
 TKScene::~TKScene() {
     TKLog("destructed TKScene\n");
-    for(int i=0; i<m_drawNodes.size(); ++i){
+    for(uint32_t i=0; i<m_drawNodes.size(); ++i){
         TKBaseNode *node = m_drawNodes[i];
         delete  node;
     }
@@ -33,12 +33,10 @@ bool TKScene::init(uint32_t width, uint32_t height) {
     m_height = height;
     m_currentIdx = 0;
     vkDeviceWaitIdle(TKBaseInfo::Info()->device);
-    TKLog("init scene success!\n");
     return true;
 }
 
 void TKScene::updateDrawCommand(){
-    //TKLog("update command image indice %d\n", m_currentIdx);
     vkResetCommandBuffer(TKBaseInfo::Info()->commandBuffers[m_currentIdx],
                          VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     VkCommandBufferBeginInfo cmdBufBeginInfo;
@@ -103,8 +101,11 @@ void TKScene::updateDrawCommand(){
     vkCmdSetViewport(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 0, 1, &viewport);
     vkCmdSetScissor(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 0, 1, &rect);
     vkCmdSetLineWidth(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 1.0);
-    
+
+	
     this->drawObjects();
+
+	
     vkCmdEndRenderPass(TKBaseInfo::Info()->commandBuffers[m_currentIdx]);
     if(TKBaseInfo::Info()->presentQueueFamily != TKBaseInfo::Info()->graphicsQueueFamily){
         VkImageSubresourceRange subResourceRange;
@@ -140,16 +141,19 @@ void TKScene::drawObjects(){
 }
 
 void TKScene::renderDraw(){
-	vkWaitForFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx], VK_TRUE, 200);
-   
 	VkResult result;
     do{
         result = vkAcquireNextImageKHR(TKBaseInfo::Info()->device, TKBaseInfo::Info()->swapchain,
                                        UINT64_MAX, TKBaseInfo::Info()->graphicsSemaphore[m_frameIdx],
                                        VK_NULL_HANDLE, &m_currentIdx);
     }while(result != VK_SUCCESS);
-    this->updateDrawCommand();
-    //submit
+
+	vkWaitForFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx], VK_TRUE, 200);
+	vkResetFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx]);
+	
+	this->updateDrawCommand();
+
+	//submit
     VkSubmitInfo submitInfo;
     submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.pNext                = nullptr;
@@ -168,8 +172,6 @@ void TKScene::renderDraw(){
         TKLog("queue submit failed! Error: %d\n", ret);
     }
 
-    vkResetFences(TKBaseInfo::Info()->device, 1, &TKBaseInfo::Info()->fences[m_currentIdx]);
- 
     //present 
     VkPresentInfoKHR presentInfo;
     presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

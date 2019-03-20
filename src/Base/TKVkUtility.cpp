@@ -102,9 +102,7 @@ VkDynamicState TKVkUtility::VkDynamicStateFrom(const std::string &str){
 }
 
 VkDescriptorType TKVkUtility::VkDecriptorTypeFrom(const std::string &str){
-	TKLog("descriptor type %s\n", str.c_str());
     Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
-	
     return VkDescriptorType(root["DescriptorType"][str].asUInt());
 }
 

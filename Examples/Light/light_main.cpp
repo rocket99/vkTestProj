@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     TKBaseInfo::share()->initRenderPass();
     TKBaseInfo::share()->initFramebuffers();
     TKBaseInfo::share()->initCommandPool();
-    TKBaseInfo::share()->initDescriptorPool();
+	TKBaseInfo::share()->initDescriptorPool();
     TKBaseInfo::share()->initFencesAndSemaphores();
 
 	TKModuleManager::prepareAllModules();

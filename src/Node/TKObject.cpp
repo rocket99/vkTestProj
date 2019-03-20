@@ -56,8 +56,7 @@ TKObjectPool::~TKObjectPool(){
 
 TKObjectPool *TKObjectPool::sharedPool(){
     if(inst == nullptr){
-        inst = new TKObjectPool();
-       
+        inst = new TKObjectPool();       
     }
     return inst;
 }

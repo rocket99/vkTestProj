@@ -18,7 +18,6 @@ TKBaseNode::TKBaseNode() {
 
 TKBaseNode::~TKBaseNode() {
     TKLog("destruct TKBaseNode %p!\n", this);
-//    VkDevice device = TKBaseInfo::Info()->device;
     delete m_basicUniform;
     delete m_tranUniform;
     delete m_frontMaterialUniform;
@@ -187,7 +186,7 @@ void TKBaseNode::displayRotateMatrix() const {
 }
 
 void TKBaseNode::draw(VkCommandBuffer cmdBuf, uint32_t swapIdx){
-	TKLog("tkBaseNode draw!\n");
+	TKLog("TKBaseNode %p draw!\n", this);
 	TKNodeList *lst = m_subList->next;
     while(lst != nullptr){
         static_cast<TKBaseNode *>(lst->node)->draw(cmdBuf, swapIdx);

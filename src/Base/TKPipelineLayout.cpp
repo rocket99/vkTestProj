@@ -63,15 +63,12 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         VkDescriptorSetLayoutBinding layoutBind;
         layoutBind.binding         = value[i]["binding"].asUInt();
         layoutBind.descriptorCount = value[i]["descriptorCount"].asUInt();
-		
         layoutBind.descriptorType  = TKVkUtility::VkDecriptorTypeFrom(value[i]["desciptorType"].asString());
         layoutBind.stageFlags      = TKVkUtility::VkShaderStageFlagBitsFrom(value[i]["stageFlags"].asString());
-		TKLog("stage flag %d, type %s %d\n", layoutBind.stageFlags, value[i]["desciptorType"].asString().c_str(),
-			layoutBind.descriptorType);
-        layoutBind.pImmutableSamplers = nullptr;
+		layoutBind.pImmutableSamplers = nullptr;
         bindings.push_back(layoutBind);
     }
-    
+    TKLog("binding count %zu\n", bindings.size());
     uint32_t swapCount = TKBaseInfo::Info()->swapchainImageViews.size();
     m_descSets.resize(swapCount);
     m_descSetLayouts.resize(swapCount);
@@ -106,7 +103,9 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         descSetAllocInfo.descriptorPool = TKBaseInfo::Info()->descriptorPool;
         descSetAllocInfo.descriptorSetCount = 1;
         descSetAllocInfo.pSetLayouts = &m_descSetLayouts[i];
+		TKLog("-------%d------\n", i);
         vkAllocateDescriptorSets(device, &descSetAllocInfo, &m_descSets[i]);
+		TKLog("alloc descriptor sets\n");
     }
     return true;
 }

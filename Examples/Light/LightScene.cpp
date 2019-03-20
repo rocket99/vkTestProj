@@ -26,13 +26,12 @@ bool LightScene::initLightScene(uint32_t lightNum){
         return false;
     }
 
-    m_rootNode = TKGeometryObj::createSphere(200);
+    m_rootNode = new TKBaseNode();
     if(m_rootNode->initialize() == false){
         delete m_rootNode; 
-    }
+	}
 
-	m_pipeline = TKJsonPipeline::createFromJson("light_pipeline.json");
-	m_rootNode->setPipelineToUse(m_pipeline);
+	m_pipeline = TKJsonPipeline::createFromJson("first_pipeline.json");
 	
     m_spaceSize = Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_camera = TKCamera::createWithLookat(Float3(0.0, 0.0, 0.0),
@@ -41,7 +40,7 @@ bool LightScene::initLightScene(uint32_t lightNum){
     m_camera->updateUniformData();
     m_cameraUniform = TKUniform::createWithSize(sizeof(float)*20);
     m_eyeUniform = TKUniform::createWithSize(4);
-    float data[4]; memset(data, 0, sizeof(float));
+    float data[4]; memset(data, 0, sizeof(float)*4);
     Float3 eyePos = m_camera->getPosition();
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     eyePos.copyTo(data);
@@ -61,8 +60,8 @@ bool LightScene::initLightScene(uint32_t lightNum){
     m_lightUniform->updateData(buf, sizeof(float)*26, 0);
 
     angle = 0.0;
-    
-    TKLog("init light scene ok!\n");
+
+	this->initObjects();
     return true;
 }
 
@@ -85,7 +84,7 @@ void LightScene::initObjects(){
     Float4(1.0, 1.0, 1.0, 1.0).copyTo(ground->backMaterial.specular);
     ground->backMaterial.shiness = 20;
     ground->refreshMaterial();
-    
+    /*
     TKGeometryObj *sphere = TKGeometryObj::createSphere(100);
     sphere->setTag(2);
     sphere->setPipelineToUse(m_pipeline);
@@ -104,7 +103,7 @@ void LightScene::initObjects(){
     Float4(0.5, 0.5, 0.5, 1.0).copyTo(sphere->backMaterial.diffuse);
     Float4(1.0, 0.0, 0.0, 1.0).copyTo(sphere->backMaterial.specular);
     sphere->backMaterial.shiness = 50;
-    sphere->refreshMaterial();
+    sphere->refreshMaterial();*/
 }
 
 void LightScene::drawObjects(){
@@ -120,18 +119,20 @@ void LightScene::drawObjects(){
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_eyeUniform->updateData(data, sizeof(float)*3, 0);
 
-	VkDescriptorSet descSet = m_pipeline->descriptorSet(m_currentIdx);
+	//VkDescriptorSet descSet = m_pipeline->descriptorSet(m_currentIdx);
     VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
-    
-	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline->pipeline());	
-    VkWriteDescriptorSet cameraDescSet = m_cameraUniform->writeDescSet(descSet, 0);
-    m_rootNode->addWriteDescSet(cameraDescSet);
-	VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
-    VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
-	m_rootNode->addWriteDescSet(lightDescSet);
-	m_rootNode->addWriteDescSet(eyeDescSet);
-    m_rootNode->draw(cmdBuf, m_currentIdx);
-    angle += 0.25*M_PI/180.0;
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline->pipeline());
+	vkCmdDraw(cmdBuf, 6, 1, 0, 0);
+	
+//  VkWriteDescriptorSet cameraDescSet = m_cameraUniform->writeDescSet(descSet, 0);
+//	VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
+//  VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
+//	m_rootNode->addWriteDescSet(cameraDescSet);
+//	m_rootNode->addWriteDescSet(lightDescSet);
+//	m_rootNode->addWriteDescSet(eyeDescSet);
+//	m_rootNode->draw(cmdBuf, m_currentIdx);
+
+	angle += 0.25*M_PI/180.0;
     m_camera->setPosition(600.0*cos(angle), 400.0, 600.0*sin(angle));
     m_camera->updateUniformData();
     

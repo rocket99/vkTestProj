@@ -69,7 +69,7 @@
         ]
     },
     "Rasterization":{
-        "depthClampEnable":"VK_TRUE",
+        "depthClampEnable":"VK_FALSE",
         "rasterDiscard":"VK_FALSE",
         "polygonMode":"VK_POLYGON_MODE_FILL",
         "cullMode":"VK_CULL_MODE_NONE",
@@ -84,7 +84,7 @@
         "rasterizationSamples":"VK_SAMPLE_COUNT_1_BIT",
         "sampleShadingEnable":"VK_FALSE",
         "minSampleShading":1.0,
-        "pSampleMask":[],
+        "pSampleMask":[1],
         "alphaToCoverageEnable":"VK_FALSE",
         "alphaToOneEnable":"VK_FALSE"
     },
@@ -92,14 +92,14 @@
         "depthTestEnable":"VK_FALSE",
         "depthWriteEnable":"VK_TRUE",
         "depthCompareOp":"VK_COMPARE_OP_LESS_OR_EQUAL",
-        "depthBoundsTestEnable":"VK_TRUE",
+        "depthBoundsTestEnable":"VK_FALSE",
         "front":{
             "failOp":"VK_STENCIL_OP_KEEP",
             "passOp":"VK_STENCIL_OP_KEEP",
             "depthFailOp":"VK_STENCIL_OP_KEEP",
             "compareOp":"VK_COMPARE_OP_ALWAYS",
-            "compareMask":0,
-            "writeMask":0,
+            "compareMask":1,
+            "writeMask":1,
             "reference":0
         },
         "back":{
@@ -139,6 +139,7 @@
         "VK_DYNAMIC_STATE_LINE_WIDTH",
         "VK_DYNAMIC_STATE_DEPTH_BIAS"
     ],
+
     "layout":[
         {
             "binding":0,
@@ -152,13 +153,6 @@
             "desciptorType":"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER",
             "descriptorCount":1,
             "stageFlags":"VK_SHADER_STAGE_VERTEX_BIT",
-            "pImmutableSamplers":""
-        },
-        {
-            "binding":2,
-            "desciptorType":"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER",
-            "descriptorCount":1,
-            "stageFlags":"VK_SHADER_STAGE_FRAGMENT_BIT",
             "pImmutableSamplers":""
         }
     ]

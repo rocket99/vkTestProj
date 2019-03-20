@@ -1,0 +1,1 @@
+/usr/bin/clang++     CMakeFiles/light.dir/LightScene.cpp.o CMakeFiles/light.dir/light_main.cpp.o  -o light ../../src/Base/libTKBase.a ../../src/Math/libTKMath.a ../../src/Node/libTKNode.a -lvulkan -ljsoncpp -ljpeg -lpng -lpthread -lxcb 

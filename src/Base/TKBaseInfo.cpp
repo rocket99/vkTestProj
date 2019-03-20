@@ -13,23 +13,23 @@ TKBaseInfo::TKBaseInfo() {
 TKBaseInfo::~TKBaseInfo() {
     delete m_renderPass;
     delete m_depthImageView;
-    
-    for(int i=0; i<m_info->framebuffers.size(); ++i){
+    TKLog("destruct TKBaseInfo\n");
+    for(uint32_t i=0; i<m_info->framebuffers.size(); ++i){
         vkDestroyFramebuffer(m_info->device, m_info->framebuffers[i], nullptr);
     }
-    for(int i=0; i<m_info->swapchainImageViews.size(); ++i){
+    for(uint32_t i=0; i<m_info->swapchainImageViews.size(); ++i){
         vkDestroyImageView(m_info->device, m_info->swapchainImageViews[i], nullptr);
     }
 
-    for(int i=0; i<m_info->fences.size(); ++i){
+    for(uint32_t i=0; i<m_info->fences.size(); ++i){
         vkDestroyFence(m_info->device, m_info->fences[i], nullptr);
     }
 
-    for(int i=0; i<m_info->graphicsSemaphore.size(); ++i){
+    for(uint32_t i=0; i<m_info->graphicsSemaphore.size(); ++i){
         vkDestroySemaphore(m_info->device, m_info->graphicsSemaphore[i], nullptr);
     }
 
-    for(int i=0; i<m_info->presentSemaphore.size(); ++i){
+    for(uint32_t i=0; i<m_info->presentSemaphore.size(); ++i){
         vkDestroySemaphore(m_info->device, m_info->presentSemaphore[i], nullptr);
     }
     
@@ -52,6 +52,7 @@ TKBaseInfo::~TKBaseInfo() {
     if(m_info->instance != VK_NULL_HANDLE){
         vkDestroyInstance(m_info->instance, nullptr);
     }
+	TKLog("destruct TKBaseInfo end mark!\n");
     delete m_info;
 }
 
@@ -190,12 +191,7 @@ void TKBaseInfo::initDevice() {
         TKLog("Failed createing logical device:%d\n", result);
         return;
     }
-    TKLog("step 3: create vulkan logical device success!\n");
-    /*
-    for(int i=0; i<priorityArr.size(); ++i){
-        free(priorityArr[i]);
-    }
-    */
+
     vkGetDeviceQueue(m_info->device, m_info->graphicsQueueFamily, 0, &m_info->graphicsQueue);
     vkGetDeviceQueue(m_info->device, m_info->presentQueueFamily, 0, &m_info->presentQueue);
 }
@@ -207,13 +203,7 @@ void TKBaseInfo::setGraphicsQueueIndex(){
     std::vector<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(m_info->physicalDevice, &queueFamilyCount,
                                              queueFamilyProperties.data());
-    /*
-    for(int i=0; i<queueFamilyCount; ++i){
-         TKLog("queue flags:0x%x, queue count: %d\n",
-               queueFamilyProperties[i].queueFlags,
-               queueFamilyProperties[i].queueCount);
-    }
-    */
+
     VkBool32 graphicsQueueFound = VK_FALSE;
     uint32_t graphicsQueueFamily = 0;
     for(uint32_t i=0; i<queueFamilyCount; ++i){
@@ -226,9 +216,7 @@ void TKBaseInfo::setGraphicsQueueIndex(){
     }
 
     if(graphicsQueueFound == VK_TRUE){
-        //TKLog("set graphics queue family %d\n", graphicsQueueFamily);
         m_info->graphicsQueueFamily = graphicsQueueFamily;
-        //vkGetDeviceQueue(m_info->device, m_info->graphicsQueueFamily, 0, &m_info->graphicsQueue);
     }
 }
 
@@ -267,27 +255,6 @@ void TKBaseInfo::initSwapchain() {
     std::vector<VkPresentModeKHR> presentModes(presentModeCount);
     vkGetPhysicalDeviceSurfacePresentModesKHR(m_info->physicalDevice, m_info->surface,
                                               &presentModeCount, presentModes.data());
-    /*
-    for(int i=0; i<presentModeCount; ++i){
-        switch(presentModes[i]){
-        case VK_PRESENT_MODE_FIFO_KHR:
-            TKLog("present mode[%d]: VK_PRESENT_MODE_FIFO_KHR\n", i+1);
-            break;
-        case VK_PRESENT_MODE_FIFO_RELAXED_KHR:
-            TKLog("present mode[%d]: VK_PRESENT_MODE_FIFO_RELAXED_KHR\n", i+1);
-            break;
-        case VK_PRESENT_MODE_IMMEDIATE_KHR:
-            TKLog("present mode[%d]: VK_PRESENT_MODE_IMMEDIATE_KHR\n", i+1);
-            break;
-        case VK_PRESENT_MODE_MAILBOX_KHR:
-            TKLog("present mode[%d]: VK_PRESENT_MODE_MAILBOX_KHR\n", i+1);
-            break;
-        default:
-            TKLog("unknown present mode!\n");
-            break;
-        }
-    }
-    */
     
     VkBool32 isSupported = VK_FALSE;
     vkGetPhysicalDeviceSurfaceSupportKHR(m_info->physicalDevice, m_info->presentQueueFamily,
@@ -319,10 +286,9 @@ void TKBaseInfo::initSwapchain() {
     VkResult ret = vkCreateSwapchainKHR(m_info->device, &createInfo, nullptr, &m_info->swapchain);
     assert(ret == VK_SUCCESS);
     if(ret != VK_SUCCESS){
-        printf("create swapchain failed %d\n", ret);
+        TKLog("create swapchain failed %d\n", ret);
         return;
     }
-    TKLog("step 4: create swapchain success!\n");
 
     uint32_t imageCount;
     ret = vkGetSwapchainImagesKHR(m_info->device, m_info->swapchain, &imageCount, nullptr);
@@ -379,7 +345,6 @@ void TKBaseInfo::initFramebuffers(){
             TKLog("create frame buffer [%d] failed!\n", i);
         }
     }
-    TKLog("create Framebuffer success!\n");
 }
 
 void TKBaseInfo::initCommandPool() {
@@ -396,7 +361,6 @@ void TKBaseInfo::initCommandPool() {
         printf("create command pool failed!\n");
         return;
     }
-    TKLog("create command pool success!\n");
     uint32_t count = m_info->swapchainImages.size();
     m_info->commandBuffers.resize(count);
     VkCommandBufferAllocateInfo allocInfo;
@@ -409,8 +373,6 @@ void TKBaseInfo::initCommandPool() {
                                    m_info->commandBuffers.data());
     if(ret != VK_SUCCESS){
         TKLog("allocate command buffers error occured!\n");
-    }else{
-        TKLog("allocate command buffers success!\n");
     }
 }
 
@@ -431,7 +393,7 @@ void TKBaseInfo::initFencesAndSemaphores(){
         vkCreateFence(m_info->device, &fenceInfo, nullptr, &m_info->fences[i]);
     }
     m_info->graphicsSemaphore.resize(count);
-    for(int i=0; i<count; ++i){
+    for(uint32_t i=0; i<count; ++i){
         VkSemaphoreCreateInfo semaphoreInfo;
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
         semaphoreInfo.pNext = nullptr;
@@ -439,7 +401,7 @@ void TKBaseInfo::initFencesAndSemaphores(){
         vkCreateSemaphore(m_info->device, &semaphoreInfo, nullptr, &m_info->graphicsSemaphore[i]);
     }
     m_info->presentSemaphore.resize(count);
-    for(int i=0; i<count; ++i){
+    for(uint32_t i=0; i<count; ++i){
         VkSemaphoreCreateInfo semaphoreInfo;
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
         semaphoreInfo.pNext = nullptr;
@@ -455,12 +417,19 @@ void TKBaseInfo::initDescriptorPool() {
     poolInfo.pNext = nullptr;
     poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
     poolInfo.maxSets = 100;
-    std::vector<VkDescriptorPoolSize> poolSizeArr(1);
+    std::vector<VkDescriptorPoolSize> poolSizeArr(2);
     poolSizeArr[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizeArr[0].descriptorCount = 1;
+    poolSizeArr[0].descriptorCount = 5;
+    poolSizeArr[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizeArr[1].descriptorCount = 5;
+
     poolInfo.poolSizeCount = poolSizeArr.size();
     poolInfo.pPoolSizes = poolSizeArr.data();
-    vkCreateDescriptorPool(TKBaseInfo::Info()->device, &poolInfo, nullptr, &m_info->descriptorPool);
+    VkResult ret = vkCreateDescriptorPool(TKBaseInfo::Info()->device, &poolInfo,
+										  nullptr, &m_info->descriptorPool);
+	if(ret != VK_SUCCESS){
+		TKLog("create descriptor pool error %d!\n", ret);
+	}
 }
 
 
@@ -469,8 +438,7 @@ void TKBaseInfo::displayInstanceLayers(){
     vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr);
     std::vector<VkLayerProperties> layerProperties(instanceLayerCount);
     vkEnumerateInstanceLayerProperties(&instanceLayerCount, layerProperties.data());
-    TKLog("instance layers:\n");
-    for(int i=0; i<layerProperties.size(); ++i){
+    for(uint32_t i=0; i<layerProperties.size(); ++i){
         TKLog("\t%s:%s\n", layerProperties[i].layerName, layerProperties[i].description);
     }
 
@@ -480,7 +448,7 @@ void TKBaseInfo::displayInstanceLayers(){
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
                                            extensionProperties.data());
     TKLog("instance extensions:\n");
-    for(int i=0; i<extensionCount; ++i){
+    for(uint32_t i=0; i<extensionCount; ++i){
         TKLog("extension: %s, spec ver %d\n", extensionProperties[i].extensionName,
               extensionProperties[i].specVersion);
     }
@@ -514,7 +482,7 @@ uint32_t TKBaseInfo::getMemoryTypeIndex(VkMemoryRequirements memoryReq){
    uint32_t memoryTypeIdx = UINT32_MAX;
     VkMemoryPropertyFlags requiredMemoryFlag = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    for (int i=0; i<TKBaseInfo::Info()->physicalMemoryInfo.memoryTypeCount; ++i){
+    for (uint32_t i=0; i<TKBaseInfo::Info()->physicalMemoryInfo.memoryTypeCount; ++i){
         VkPhysicalDeviceMemoryProperties memoryInfo = TKBaseInfo::Info()->physicalMemoryInfo;
         VkMemoryPropertyFlags tmpPropertyFlag = memoryInfo.memoryTypes[i].propertyFlags;
         if(memoryReq.memoryTypeBits & (1 << i)){
@@ -524,10 +492,5 @@ uint32_t TKBaseInfo::getMemoryTypeIndex(VkMemoryRequirements memoryReq){
             }
         }
     }
-    //TKLog("memory type index %d\n", memoryTypeIdx);
     return memoryTypeIdx;
 }
-
-
-
-

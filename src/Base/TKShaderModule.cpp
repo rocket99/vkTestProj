@@ -101,12 +101,11 @@ void TKModuleManager::addNewModule(const char *fileName){
     TKModuleManager::shared()->allShaderModules.push_back(module);
     std::string name = module->getModuleName();
     TKModuleManager::shared()->moduleDict[name] = module->getModule();
-    TKLog("add new shader module %s\n", fileName); 
 }
 
 VkShaderModule TKModuleManager::shaderModule(const char *fileName){
     if (TKModuleManager::shared()->moduleDict[fileName] == nullptr){
-		TKLog("const find module %s\n", fileName);
+		TKLog("can not find module %s\n", fileName);
         return VK_NULL_HANDLE;
     }
     return TKModuleManager::shared()->moduleDict[fileName];
