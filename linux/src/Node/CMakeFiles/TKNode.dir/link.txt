@@ -1,2 +1,0 @@
-/usr/bin/ar qc libTKNode.a  CMakeFiles/TKNode.dir/TKBaseNode.cpp.o CMakeFiles/TKNode.dir/TKFbxNode.cpp.o CMakeFiles/TKNode.dir/TKGeometryObj.cpp.o CMakeFiles/TKNode.dir/TKObject.cpp.o
-/usr/bin/ranlib libTKNode.a

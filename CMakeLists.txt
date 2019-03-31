@@ -15,18 +15,20 @@ project(vkTestProj)
 #SET(CMAKE_CXX_FLAGS_RELEASE "-o4 -DNDEBUG")
 #SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-o2 -g")
 
-set(VULKAN_SDK "/usr/local/VulkanSDK/1.1.97.0/x86_64")
-
 message("start cmake")
 message("${PROJECT_SOURCE_DIR}/src")
 message("complier : ${CMAKE_CXX_COMPILER_ID}")
-message("${VULKAN_SDK}/include")
+message("$ENV{VULKAN_SDK}/include")
 
-include_directories("${VULKAN_SDK}/include")
+include_directories("$ENV{VULKAN_SDK}/include")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src/Base")
 include_directories("${PROJECT_SOURCE_DIR}/src/Math")
 include_directories("${PROJECT_SOURCE_DIR}/src/Node")
+
+find_library(VulkanLib NAMES vulkan HINTS "$ENV{VULKAN_SDK}/lib")
+message("find vulkan library: ${VulkanLib}")
+#link_libraries(${VulkanLib})
 
 add_subdirectory(src)
 add_subdirectory(Examples)

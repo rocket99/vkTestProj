@@ -2,7 +2,7 @@
 
 message("${CMAKE_CURRENT_SRC_DIR}")
 
-#include_directories("${VULKAN_SDK}/inlcude")
+include_directories("$ENV{VULKAN_SDK}/inlcude")
 
 #include_directories("${CMAKE_CURRENT_SRC_DIR}/.")
 #include_directories("${CMAKE_CURRENT_SRC_DIR}/Math")
