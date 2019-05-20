@@ -26,10 +26,17 @@ public:
     static VkSampleCountFlagBits VkSampleCountFlagBitFrom(const std::string &str);
     static VkDynamicState VkDynamicStateFrom(const std::string &str);
     static VkDescriptorType VkDecriptorTypeFrom(const std::string &str);
-    static VkShaderStageFlagBits VkShaderStageFlagBitsFrom(const std::string &str);
-    
-    Json::Value VkConfigFrom(const std::string &fileName);
+	static VkShaderStageFlagBits VkShaderStageFlagBitsFrom(const std::string &str);
 
+	static VkAttachmentLoadOp VkAttachmentLoadOpFromString(const std::string &str);
+	static VkAttachmentStoreOp VkAttachmentStoreOpFromString(const std::string &str);
+	static VkPipelineStageFlagBits VkPipelineStageFlagBitFrom(const std::string &str);
+	static VkAccessFlagBits VkAccessFlagBitFrom(const std::string &str);
+	static VkImageLayout VkImageLayoutFromString(const std::string &str);
+	static VkPipelineBindPoint VkPipelineBindPointFromString(const std::string &str);
+
+	
+    Json::Value VkConfigFrom(const std::string &fileName);
     static TKVkUtility *Utility();
 private:
     Json::Value m_root;

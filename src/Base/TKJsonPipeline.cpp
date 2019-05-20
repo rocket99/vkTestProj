@@ -12,7 +12,7 @@ TKJsonPipeline::~TKJsonPipeline(){
     TKLog("destruct pipeline object %p!\n", this);
     delete m_pipelineLayout;
     if(m_pipeline != VK_NULL_HANDLE){
-        vkDestroyPipeline(TKBaseInfo::Info()->device, m_pipeline, nullptr);
+        vkDestroyPipeline(VK_INFO->device, m_pipeline, nullptr);
     }
 }
 
@@ -43,6 +43,7 @@ bool TKJsonPipeline::initWithJsonFile(const char *fileName){
     fseek(fp, 0, SEEK_SET);
     fread(buf, sizeof(char), size, fp);
     std::string content(buf);
+	
     Json::Value root;
     Json::Reader reader;
     if(reader.parse(content, root, true) == false){
@@ -80,12 +81,12 @@ bool TKJsonPipeline::initWithJsonFile(const char *fileName){
 	pipelineInfo.pColorBlendState    = &m_colorBlendState;
 	pipelineInfo.pDynamicState       = &m_dynamicState;
     pipelineInfo.layout              = m_pipelineLayout->pipelineLayout();
-    pipelineInfo.renderPass          = TKBaseInfo::Info()->renderPass;
+    pipelineInfo.renderPass          = VK_INFO->renderPass;
     pipelineInfo.subpass             = 0;
     pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex   = -1;
 
-    VkResult ret = vkCreateGraphicsPipelines(TKBaseInfo::Info()->device, VK_NULL_HANDLE,
+    VkResult ret = vkCreateGraphicsPipelines(VK_INFO->device, VK_NULL_HANDLE,
                                              1, &pipelineInfo, nullptr, &m_pipeline);
 	if (ret != VK_SUCCESS) {
         printf("init pipeline failed! ret = %d\n", ret);
@@ -166,7 +167,7 @@ bool TKJsonPipeline::initVertexInputStateFromJson(const Json::Value &value){
     m_vertInputState.pVertexBindingDescriptions = m_inputBindDesc.data();
     m_vertInputState.vertexAttributeDescriptionCount = m_inputAttribDesc.size();
     m_vertInputState.pVertexAttributeDescriptions = m_inputAttribDesc.data();
-   
+
     return true;
 }
 

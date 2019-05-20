@@ -8,9 +8,9 @@
 
 TKPipelineLayout::TKPipelineLayout(){}
 TKPipelineLayout::~TKPipelineLayout(){
-    VkDevice device = TKBaseInfo::Info()->device;
+    VkDevice device = VK_INFO->device;
     for(uint32_t i=0; i<m_descSets.size(); ++i){
-        vkFreeDescriptorSets(device, TKBaseInfo::Info()->descriptorPool, 1, &m_descSets[i]);
+        vkFreeDescriptorSets(device, VK_INFO->descriptorPool, 1, &m_descSets[i]);
     }
     for(uint32_t i=0; i<m_descSetLayouts.size(); ++i){
         vkDestroyDescriptorSetLayout(device, m_descSetLayouts[i], nullptr);
@@ -25,7 +25,7 @@ VkPipelineLayout TKPipelineLayout::pipelineLayout() const {
 }
 
 VkDescriptorSet TKPipelineLayout::descriptorSet(uint32_t idx){
-    uint32_t descCount = TKBaseInfo::Info()->swapchainImageViews.size();
+    uint32_t descCount = VK_INFO->swapchainImageViews.size();
     return m_descSets[idx % descCount];
 }
 
@@ -36,7 +36,7 @@ void TKPipelineLayout::clearAllWriteDescSets(){
 void TKPipelineLayout::bindToCommandBuffer(const VkCommandBuffer &cmdBuf, uint32_t swapchainIdx,
                                            const std::vector<VkWriteDescriptorSet> &writeDescSets,
                                            const std::vector<VkCopyDescriptorSet>  &copyDescSets){
-    vkUpdateDescriptorSets(TKBaseInfo::Info()->device, writeDescSets.size(),
+    vkUpdateDescriptorSets(VK_INFO->device, writeDescSets.size(),
                            writeDescSets.data(), copyDescSets.size(), copyDescSets.data());
     vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout,
                             0, 1, &m_descSets[swapchainIdx], 0, nullptr);
@@ -57,7 +57,7 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         return false;
     }	
     uint32_t size = value.size();
-    VkDevice device = TKBaseInfo::Info()->device;
+    VkDevice device = VK_INFO->device;
     std::vector<VkDescriptorSetLayoutBinding> bindings;
     for(uint32_t i=0; i<size; ++i){
         VkDescriptorSetLayoutBinding layoutBind;
@@ -69,7 +69,7 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         bindings.push_back(layoutBind);
     }
     TKLog("binding count %zu\n", bindings.size());
-    uint32_t swapCount = TKBaseInfo::Info()->swapchainImageViews.size();
+    uint32_t swapCount = VK_INFO->swapchainImageViews.size();
     m_descSets.resize(swapCount);
     m_descSetLayouts.resize(swapCount);
     for(uint32_t i=0; i<swapCount; ++i){
@@ -100,7 +100,7 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         VkDescriptorSetAllocateInfo descSetAllocInfo;
         descSetAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         descSetAllocInfo.pNext = nullptr;
-        descSetAllocInfo.descriptorPool = TKBaseInfo::Info()->descriptorPool;
+        descSetAllocInfo.descriptorPool = VK_INFO->descriptorPool;
         descSetAllocInfo.descriptorSetCount = 1;
         descSetAllocInfo.pSetLayouts = &m_descSetLayouts[i];
 		TKLog("-------%d------\n", i);

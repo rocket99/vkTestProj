@@ -13,9 +13,9 @@ TKImageView::TKImageView() {
 }
 
 TKImageView::~TKImageView() {
-    vkFreeMemory(TKBaseInfo::Info()->device, m_deviceMem, nullptr);
-    vkDestroyImage(TKBaseInfo::Info()->device, m_image, nullptr);
-    vkDestroyImageView(TKBaseInfo::Info()->device, m_imageView, nullptr);
+    vkFreeMemory(VK_INFO->device, m_deviceMem, nullptr);
+    vkDestroyImage(VK_INFO->device, m_image, nullptr);
+    vkDestroyImageView(VK_INFO->device, m_imageView, nullptr);
 }
 
 VkImageView TKImageView::imageView() const {

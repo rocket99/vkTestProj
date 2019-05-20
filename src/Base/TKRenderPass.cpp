@@ -4,6 +4,7 @@
 
 #include "TKRenderPass.h"
 #include "TKBaseInfo.h"
+#include "TKVkUtility.h"
 
 TKRenderPass::TKRenderPass(){
     m_renderPass = VK_NULL_HANDLE;
@@ -11,110 +12,99 @@ TKRenderPass::TKRenderPass(){
 
 TKRenderPass::~TKRenderPass(){
     if(m_renderPass != VK_NULL_HANDLE){
-        vkDestroyRenderPass(TKBaseInfo::Info()->device, m_renderPass, nullptr);
+        vkDestroyRenderPass(VK_INFO->device, m_renderPass, nullptr);
     }
 }
 
 TKRenderPass *TKRenderPass::createRenderPass(){
-    TKRenderPass *renderPass = new TKRenderPass();
-    if(false == renderPass->initRenderPass()){
-        delete renderPass;
-        renderPass = nullptr;
-    }
-    return renderPass;
+    return TKRenderPass::createWithJson("renderpass.json");
 }
 
-bool TKRenderPass::initRenderPass(){
-    m_colorAttachmentCount = 1;
-    std::vector<VkAttachmentReference> inputAttachRef(1);
-    inputAttachRef[0].attachment = 0;
-    inputAttachRef[0].layout     = VK_IMAGE_LAYOUT_GENERAL;
+TKRenderPass *TKRenderPass::createWithJson(const std::string &fileName){
+	TKRenderPass *renderPass = new TKRenderPass;
+  	if(renderPass->initWithJson(fileName)==false){
+		delete renderPass;
+		renderPass = nullptr;
+	}
+	return renderPass;
+}
 
-    std::vector<VkAttachmentReference> colorAttachRef(m_colorAttachmentCount);
-    for(int i=0; i<colorAttachRef.size(); ++i){
-        colorAttachRef[i].attachment = i;
-        colorAttachRef[i].layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    }
-    VkAttachmentReference depthAttachRef;
-    depthAttachRef.attachment = m_colorAttachmentCount;
-    depthAttachRef.layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+bool TKRenderPass::initWithJson(const std::string &fileName){
+	char buf0[512];
+	sprintf(buf0, "%s/Json/%s", PROJECT_PATH, fileName.c_str());
+	FILE *fp = fopen(buf0, "rt");
+	if(fp == nullptr){
+		TKLog("Open file %s failed!\n", fileName.c_str());
+		assert(fp != nullptr);
+		return false;
+	}
+	char tmp;
+	uint64_t size = 1;
+	while(fread(&tmp, sizeof(char), 1, fp)==1){
+		++ size;
+	}
+	char buf[size];
+	buf[size-1] = '\0';
+	fseek(fp, 0, SEEK_SET);
+	fread(buf, sizeof(char), size, fp);
+	fclose(fp);
+	
+	std::string content(buf);
+	Json::Value root;
+	Json::Reader reader;
+	reader.parse(content, root);
 
-    std::vector<VkSubpassDescription> subPassDesc(1);
-    subPassDesc[0].flags                   = 0;
-    subPassDesc[0].pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subPassDesc[0].inputAttachmentCount    = 0;//inputAttachRef.size();
-    subPassDesc[0].pInputAttachments       = nullptr;//inputAttachRef.data();
-    subPassDesc[0].colorAttachmentCount    = colorAttachRef.size();
-    subPassDesc[0].pColorAttachments       = colorAttachRef.data();
-    subPassDesc[0].pDepthStencilAttachment = &depthAttachRef;
-    subPassDesc[0].pResolveAttachments     = nullptr;
-    subPassDesc[0].preserveAttachmentCount = 0;
-    subPassDesc[0].pPreserveAttachments    = nullptr;
-    /*
-    subPassDesc[1].flags                   = 0;
-    subPassDesc[1].pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subPassDesc[1].inputAttachmentCount    = 0;
-    subPassDesc[1].pInputAttachments       = nullptr;
-    subPassDesc[1].colorAttachmentCount    = 0;
-    subPassDesc[1].pColorAttachments       = nullptr;
-    subPassDesc[1].pDepthStencilAttachment = &depthAttachRef;
-    subPassDesc[1].pResolveAttachments     = nullptr;
-    subPassDesc[1].preserveAttachmentCount = 0;
-    subPassDesc[1].pPreserveAttachments    = nullptr;
-    */
-    //TKLog("render pass format 0x%x\n", TKBaseInfo::Info()->surfaceFormats[0].format);
-    
-    std::vector<VkAttachmentDescription> attachDesc(m_colorAttachmentCount+1);
-    for(int i=0; i<attachDesc.size()-1; ++i){
-        attachDesc[i].flags             = 0;
-        attachDesc[i].format            = TKBaseInfo::Info()->surfaceFormats[0].format;
-        attachDesc[i].loadOp            = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        attachDesc[i].storeOp           = VK_ATTACHMENT_STORE_OP_STORE;
-        attachDesc[i].stencilLoadOp     = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        attachDesc[i].stencilStoreOp    = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        attachDesc[i].initialLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
-        attachDesc[i].finalLayout       = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; 
-        attachDesc[i].samples           = VK_SAMPLE_COUNT_1_BIT; 
-    }
-    attachDesc[m_colorAttachmentCount].flags           = 0;
-    attachDesc[m_colorAttachmentCount].format          = VK_FORMAT_D32_SFLOAT;
-    attachDesc[m_colorAttachmentCount].loadOp          = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    attachDesc[m_colorAttachmentCount].storeOp         = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    attachDesc[m_colorAttachmentCount].stencilLoadOp   = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    attachDesc[m_colorAttachmentCount].stencilStoreOp  = VK_ATTACHMENT_STORE_OP_STORE;
-    attachDesc[m_colorAttachmentCount].initialLayout   = VK_IMAGE_LAYOUT_UNDEFINED;
-    attachDesc[m_colorAttachmentCount].finalLayout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL; 
-    attachDesc[m_colorAttachmentCount].samples         = VK_SAMPLE_COUNT_1_BIT;   
+	VkRenderPassCreateInfo info;
+	Json::Value subpassDesValue = root["subpassDesc"];
+	std::vector<VkSubpassDescription> subpassDescArr;
+	if(false == subpassDesValue.isArray()){
+		return false;
+	}else{
+		for(uint32_t i=0; i<subpassDesValue.size();++i){
+			subpassDescArr.push_back(this->_getSubpassDescFromJson(subpassDesValue[i], i));
+		}
+	}
+	info.subpassCount = subpassDescArr.size();
+	info.pSubpasses = subpassDescArr.data();
+  
+	Json::Value attachDescValue = root["attachDesc"];
+	std::vector<VkAttachmentDescription> attachmentDescArr;
+	if(false == attachDescValue.isArray()){
+		return false;
+	}else{
+		for(uint32_t i=0; i<attachDescValue.size(); ++i){
+			attachmentDescArr.push_back(this->_getAttachmentDescription(attachDescValue[i]));
+		}
+	}
+	info.attachmentCount = attachmentDescArr.size();
+	info.pAttachments = attachmentDescArr.data();
 
-    VkSubpassDependency dependency;
-    dependency.dependencyFlags = 0;
-    dependency.srcSubpass = 0;
-    dependency.dstSubpass = 1;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
-    dependency.srcAccessMask =
-        VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-    dependency.dstAccessMask =
-        VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-        
-    VkRenderPassCreateInfo info;
-    info.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    info.pNext           = nullptr;
-    info.flags           = 0;
-    info.attachmentCount = attachDesc.size();
-    info.pAttachments    = attachDesc.data();
-    
-    info.subpassCount    = subPassDesc.size();
-    info.pSubpasses      = subPassDesc.data();
+	Json::Value dependencyValue = root["dependencies"];
+	if(false == dependencyValue.isArray()){
+		return false;
+	}
+	std::vector<VkSubpassDependency> subpassDepArr;
+	if(dependencyValue.size()==0){
+		info.dependencyCount = 0;
+		info.pDependencies = nullptr;
+	}else{
+		for(uint32_t i=0; i<dependencyValue.size(); ++i){
+			subpassDepArr.push_back(this->_getDependencyFromJson(dependencyValue[i]));
+		}
+	}
+	info.dependencyCount = subpassDepArr.size();
+	info.pDependencies = subpassDepArr.data();
+	
+	info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	info.pNext = nullptr;
+	info.flags = 0;
 
-    info.dependencyCount = 0;
-    info.pDependencies   = nullptr;//&dependency;
-    int ret = vkCreateRenderPass(TKBaseInfo::Info()->device, &info, nullptr, &m_renderPass);
-    if(ret != VK_SUCCESS){
-        return false;
-    }
-    TKLog("init render pass success!\n");
-    return true;
+	int ret = vkCreateRenderPass(VK_INFO->device, &info, nullptr, &m_renderPass);
+	if(ret != VK_SUCCESS){
+		return false;
+	}
+	TKLog("init render pass with json success");
+	return true;
 }
 
 VkRenderPass TKRenderPass::renderPass() const {
@@ -125,5 +115,106 @@ uint32_t TKRenderPass::ColorAttachCount() const {
     return m_colorAttachmentCount;
 }
 
+VkSubpassDependency TKRenderPass::_getDependencyFromJson(const Json::Value &value){
+	VkSubpassDependency dependency;
+	dependency.dependencyFlags = value["dependencyFlags"].asUInt();
+	dependency.srcSubpass = value["srcSubpass"].asUInt();
+	dependency.dstSubpass = value["dstSubpass"].asUInt();
+	dependency.srcStageMask = TKVkUtility::VkPipelineStageFlagBitFrom(value["srcStageMask"].asString());
+	dependency.dstStageMask = TKVkUtility::VkPipelineStageFlagBitFrom(value["dstStageMask"].asString());
+	if(value["srcAccessMask"].isArray()==true){
+		TKLog("access mask: %s\n", value["srcAccessMask"][0].asCString());
+		uint32_t accessMask = TKVkUtility::VkAccessFlagBitFrom(value["srcAccessMask"][0].asString());
+		for(uint32_t i=1; i<value["srcAccessMask"].size(); ++i){
+			TKLog("access mask: %s\n", value["srcAccessMask"][i].asCString());
+			accessMask |= TKVkUtility::VkAccessFlagBitFrom(value["srcAccessMask"][i].asString());
+		}
+		dependency.srcAccessMask = accessMask;
+	}
+
+	if(value["dstAccessMask"].isArray()==true){
+		TKLog("access mask: %s\n", value["srcAccessMask"][0].asCString());
+		uint32_t accessMask = TKVkUtility::VkAccessFlagBitFrom(value["dstAccessMask"][0].asString());;
+		for(uint32_t i=1; i<value["dstAccessMask"].size(); ++i){
+			TKLog("access mask: %s\n", value["srcAccessMask"][i].asCString());
+			accessMask |= TKVkUtility::VkAccessFlagBitFrom(value["dstAccessMask"][i].asString());
+		}
+		dependency.dstAccessMask = accessMask;
+	}
+	return dependency;
+}
+
+VkAttachmentReference TKRenderPass::_getAttachmentRefFromJson(const Json::Value &value){
+	VkAttachmentReference attachRef;
+	attachRef.attachment = value["attachment"].asUInt();
+	attachRef.layout = TKVkUtility::VkImageLayoutFromString(value["layout"].asString());
+	return attachRef;
+}
+
+VkSubpassDescription TKRenderPass::_getSubpassDescFromJson(const Json::Value &value, uint32_t idx){
+	std::string idxStr = std::to_string(idx);
+	VkSubpassDescription subpassDesc;
+	subpassDesc.pipelineBindPoint = TKVkUtility::VkPipelineBindPointFromString(value["pipelineBindPoint"].asString());
+	std::vector<VkAttachmentReference> inputRefArr;
+	if(value["inputAttachments"].isArray()==true){
+		for(uint32_t i=0; i<value["inputAttachments"].size(); ++i){
+			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["inputAttachments"][i]));
+		}
+	}
+	m_allAttachmentRefInfo["input"+idxStr] = inputRefArr;
+	std::vector<VkAttachmentReference> colorRefArr;
+	if(value["colorAttachments"].isArray()==true){
+		for(uint32_t i=0; i<value["colorAttachments"].size(); ++i){
+			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["colorAttachments"][i]));
+		}
+	}
+	m_allAttachmentRefInfo["color"+idxStr] = colorRefArr;
+	std::vector<VkAttachmentReference> depthRefArr;
+	if(value["depthAttachments"].isArray()==true){
+		for(uint32_t i=0; i<value["depthAttachments"].size(); ++i){
+			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["depthAttachments"][i]));
+		}
+	}
+	m_allAttachmentRefInfo["depth"+idxStr] = depthRefArr;
+	std::vector<VkAttachmentReference> resolveRefArr;
+	if(value["resolveAttachments"].isArray()==true){
+		for(uint32_t i=0; i<value["resolveAttachments"].size(); ++i){
+			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["resolveAttachments"][i]));
+		}
+	}
+	m_allAttachmentRefInfo["resolve"+idxStr] = resolveRefArr;
+	
+	std::vector<uint32_t> preserveAttachments;
+	if(value["preserveAttachments"].isArray()==true){
+		for(uint32_t i=0; i<value["preserveAttachments"].size(); ++i){
+			preserveAttachments.push_back(value["preserveAttachments"][i].asUInt());
+		}
+	}
+	m_IntAttachInfo["preserve"+idxStr] = preserveAttachments;
+	
+	subpassDesc.colorAttachmentCount = m_allAttachmentRefInfo["color"+idxStr].size();
+	subpassDesc.pColorAttachments = m_allAttachmentRefInfo["color"+idxStr].data();
+	subpassDesc.inputAttachmentCount = m_allAttachmentRefInfo["input"+idxStr].size();
+	subpassDesc.pInputAttachments = m_allAttachmentRefInfo["input"+idxStr].data();
+	subpassDesc.pResolveAttachments = m_allAttachmentRefInfo["resolve"+idxStr].data();
+	subpassDesc.pDepthStencilAttachment = m_allAttachmentRefInfo["depth"+idxStr].data();
+	subpassDesc.preserveAttachmentCount = m_IntAttachInfo["preserve"+idxStr].size();
+	subpassDesc.pPreserveAttachments = m_IntAttachInfo["preserve"+idxStr].data();
+	
+	return subpassDesc;
+}
+
+VkAttachmentDescription TKRenderPass::_getAttachmentDescription(const Json::Value &value){
+	VkAttachmentDescription attachDesc;
+	attachDesc.format = TKVkUtility::VkFormatFrom(value["format"].asString());
+	attachDesc.loadOp = TKVkUtility::VkAttachmentLoadOpFromString(value["loadOp"].asString());
+	attachDesc.storeOp = TKVkUtility::VkAttachmentStoreOpFromString(value["storeOp"].asString());
+	attachDesc.stencilLoadOp = TKVkUtility::VkAttachmentLoadOpFromString(value["stencilLoadOp"].asString());
+	attachDesc.stencilStoreOp = TKVkUtility::VkAttachmentStoreOpFromString(value["stencilStoreOp"].asString());
+	attachDesc.initialLayout = TKVkUtility::VkImageLayoutFromString(value["initialLayout"].asString());
+	attachDesc.finalLayout = TKVkUtility::VkImageLayoutFromString(value["finalLayout"].asString());
+	attachDesc.samples = TKVkUtility::VkSampleCountFlagBitFrom(value["samples"].asString());
+	return attachDesc;
+}
 
 

@@ -134,12 +134,12 @@ void LightScene::drawObjects(){
 
 	angle += 0.25*M_PI/180.0;
     m_camera->setPosition(600.0*cos(angle), 400.0, 600.0*sin(angle));
-    m_camera->updateUniformData();
+//    m_camera->updateUniformData();
     
-    TKBaseNode *node = m_rootNode->subNodeWithTag(2);
-    if(node != nullptr){
-        node->rotateX(0.5*M_PI/180.0);
-    }
+//    TKBaseNode *node = m_rootNode->subNodeWithTag(2);
+//    if(node != nullptr){
+//        node->rotateX(0.5*M_PI/180.0);
+//    }
 }
 
 

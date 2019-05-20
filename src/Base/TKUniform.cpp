@@ -13,11 +13,11 @@ TKUniform::TKUniform(){
 
 TKUniform::~TKUniform(){
     if(m_buffer != VK_NULL_HANDLE){
-        vkDestroyBuffer(TKBaseInfo::Info()->device, m_buffer, nullptr);
+        vkDestroyBuffer(VK_INFO->device, m_buffer, nullptr);
     }
     
     if(m_memory != VK_NULL_HANDLE){
-        vkFreeMemory(TKBaseInfo::Info()->device, m_memory, nullptr);
+        vkFreeMemory(VK_INFO->device, m_memory, nullptr);
     }
     
     if(m_data != nullptr){
@@ -45,28 +45,28 @@ bool TKUniform::initWithSize(uint32_t size){
     bufInfo.size  = sizeof(float)*m_size;
     bufInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     std::vector<uint32_t> queueFamilies = {
-        TKBaseInfo::Info()->graphicsQueueFamily
+        VK_INFO->graphicsQueueFamily
     };
     bufInfo.queueFamilyIndexCount = queueFamilies.size();
     bufInfo.pQueueFamilyIndices   = queueFamilies.data();
-    VkResult ret = vkCreateBuffer(TKBaseInfo::Info()->device, &bufInfo, nullptr, &m_buffer);
+    VkResult ret = vkCreateBuffer(VK_INFO->device, &bufInfo, nullptr, &m_buffer);
     if(ret != VK_SUCCESS){
         TKLog("uniform %p create buffer failed! Error:0x%X\n", this, ret);
         return false;
     }
     VkMemoryRequirements memReqInfo;
-    vkGetBufferMemoryRequirements(TKBaseInfo::Info()->device, m_buffer, &memReqInfo);
+    vkGetBufferMemoryRequirements(VK_INFO->device, m_buffer, &memReqInfo);
     VkMemoryAllocateInfo allocInfo;
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.pNext = nullptr;
     allocInfo.allocationSize = memReqInfo.size;
     allocInfo.memoryTypeIndex = TKBaseInfo::getMemoryTypeIndex(memReqInfo);
-    ret = vkAllocateMemory(TKBaseInfo::Info()->device, &allocInfo, nullptr, &m_memory);
+    ret = vkAllocateMemory(VK_INFO->device, &allocInfo, nullptr, &m_memory);
     if(ret != VK_SUCCESS){
         TKLog("uniform alloc memory failed!\n");
         return false;
     }
-    ret = vkBindBufferMemory(TKBaseInfo::Info()->device, m_buffer, m_memory, 0);
+    ret = vkBindBufferMemory(VK_INFO->device, m_buffer, m_memory, 0);
     if(ret != VK_SUCCESS){
         TKLog("bind buffer memory!\n");
         return false;
@@ -84,7 +84,7 @@ void TKUniform::updateData(float *src, uint32_t size, uint32_t offset){
 
 VkWriteDescriptorSet TKUniform::writeDescSet(const VkDescriptorSet &descSet,
                                              uint32_t dstBind, uint32_t dstElement) {
-    VkDevice device = TKBaseInfo::Info()->device;
+    VkDevice device = VK_INFO->device;
     void *pData = nullptr;
     VkDeviceSize commitSize;
     vkGetDeviceMemoryCommitment(device, m_memory, &commitSize);
@@ -109,3 +109,5 @@ VkWriteDescriptorSet TKUniform::writeDescSet(const VkDescriptorSet &descSet,
 
     return m_wDescSet;
 }
+
+

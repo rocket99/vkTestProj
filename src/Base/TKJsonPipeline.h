@@ -70,6 +70,7 @@ private:
 	void debugDynamicState();
 
 	Json::Value m_debugInfoJson;
+
 };
 
 #endif

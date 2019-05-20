@@ -10,7 +10,7 @@ TKShaderModule::TKShaderModule(){
 
 TKShaderModule::~TKShaderModule(){
     if(m_module != VK_NULL_HANDLE){
-        vkDestroyShaderModule(TKBaseInfo::Info()->device, m_module, nullptr);
+        vkDestroyShaderModule(VK_INFO->device, m_module, nullptr);
     }
 }
 
@@ -51,7 +51,7 @@ bool TKShaderModule::initWithFile(const char *fileName){
     info.pNext = nullptr;
     info.codeSize = codeSize;
     info.pCode = code;
-    int ret = vkCreateShaderModule(TKBaseInfo::Info()->device,
+    int ret = vkCreateShaderModule(VK_INFO->device,
                                    &info, nullptr, &m_module);
     free(code);
     if (ret != VK_SUCCESS){

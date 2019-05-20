@@ -132,7 +132,7 @@ void TKWindow::initInstance() {
 	}
 	
 	
-    VkResult result = vkCreateInstance(&info, nullptr, &TKBaseInfo::Info()->instance);
+    VkResult result = vkCreateInstance(&info, nullptr, &VK_INFO->instance);
     if(result != VK_SUCCESS){
         TKLog("create vulkan instance failed! ERROR: %d\n", result);
         return;
@@ -145,13 +145,13 @@ void TKWindow::initSurface(){
     TKBaseInfo::share()->setGraphicsQueueIndex();
     /*
     uint32_t queueFamilyCount = UINT32_MAX;
-    vkGetPhysicalDeviceQueueFamilyProperties(TKBaseInfo::Info()->physicalDevice,
+    vkGetPhysicalDeviceQueueFamilyProperties(VK_INFO->physicalDevice,
                                              &queueFamilyCount, nullptr);
     std::vector<VkQueueFamilyProperties> queueFamilyProp(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(TKBaseInfo::Info()->physicalDevice,
+    vkGetPhysicalDeviceQueueFamilyProperties(VK_INFO->physicalDevice,
                                              &queueFamilyCount, queueFamilyProp.data());
     */
-    VkBool32 supported = vkGetPhysicalDeviceXcbPresentationSupportKHR(TKBaseInfo::Info()->physicalDevice,
+    VkBool32 supported = vkGetPhysicalDeviceXcbPresentationSupportKHR(VK_INFO->physicalDevice,
                                                                       0, m_connection, m_visualid);
     if(supported != VK_TRUE){
         TKLog("unsupported xcb window!\n");
@@ -165,7 +165,7 @@ void TKWindow::initSurface(){
     surfaceCreateInfo.sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
     surfaceCreateInfo.connection = m_connection;
     surfaceCreateInfo.window     = m_window;
-    VkResult result = vkCreateXcbSurfaceKHR(TKBaseInfo::Info()->instance, &surfaceCreateInfo,
+    VkResult result = vkCreateXcbSurfaceKHR(VK_INFO->instance, &surfaceCreateInfo,
                                             nullptr, &surface);
     if (result != VK_SUCCESS) {
         TKLog("Failed to create vulkan surface: %d\n", result);
@@ -174,12 +174,12 @@ void TKWindow::initSurface(){
     TKLog("step 2 :create surface KHR success!\n");
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(TKBaseInfo::Info()->physicalDevice, surface,
+    vkGetPhysicalDeviceSurfaceFormatsKHR(VK_INFO->physicalDevice, surface,
                                          &formatCount, nullptr);
-    TKBaseInfo::Info()->surfaceFormats.resize(formatCount);
-    vkGetPhysicalDeviceSurfaceFormatsKHR(TKBaseInfo::Info()->physicalDevice, surface,
-                                         &formatCount, TKBaseInfo::Info()->surfaceFormats.data());
-    TKBaseInfo::Info()->surface = surface;
+    VK_INFO->surfaceFormats.resize(formatCount);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(VK_INFO->physicalDevice, surface,
+                                         &formatCount, VK_INFO->surfaceFormats.data());
+    VK_INFO->surface = surface;
 
     TKBaseInfo::share()->setPresentQueueIndex();
 }

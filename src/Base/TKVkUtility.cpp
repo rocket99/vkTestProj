@@ -112,6 +112,48 @@ VkShaderStageFlagBits TKVkUtility::VkShaderStageFlagBitsFrom(const std::string &
 	return VkShaderStageFlagBits(value);
 }
 
+VkPipelineStageFlagBits TKVkUtility::VkPipelineStageFlagBitFrom(const std::string &str){
+	TKLog("%s\n", str.c_str());
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+	Json::Value pipelineStage = root["PipelineStageFlagBit"];
+	printf("%s\n", pipelineStage[str].asCString());
+    uint32_t value = strtoul(pipelineStage[str].asCString(), nullptr, 16);
+	return VkPipelineStageFlagBits(value);
+}
+
+VkAccessFlagBits TKVkUtility::VkAccessFlagBitFrom(const std::string &str){
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+	Json::Value accessFlags = root["AccessFlagBits"];
+    uint32_t value = strtoul(accessFlags[str].asCString(), nullptr, 16);
+	return VkAccessFlagBits(value);
+}
+
+VkAttachmentLoadOp TKVkUtility::VkAttachmentLoadOpFromString(const std::string &str){
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+    uint32_t value = root["AttachmentLoadOp"][str].asUInt();
+	return VkAttachmentLoadOp(value);
+}
+
+VkAttachmentStoreOp TKVkUtility::VkAttachmentStoreOpFromString(const std::string &str){
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+    uint32_t value = root["AttachmentStoreOp"][str].asUInt();
+	return VkAttachmentStoreOp(value);
+}
+
+VkImageLayout TKVkUtility::VkImageLayoutFromString(const std::string &str){
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+	std::string str0 = str;
+	if(root["ImageLayout"][str].isString()==true){
+		str0 = root["ImageLayout"][str].asString(); 
+	}
+	return  VkImageLayout(root["ImageLayout"][str0].asUInt());
+}
+
+VkPipelineBindPoint TKVkUtility::VkPipelineBindPointFromString(const std::string &str){
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+	return VkPipelineBindPoint(root["PipelineBindPoint"][str].asUInt());
+}
+
 Json::Value TKVkUtility::VkConfigFrom(const std::string &fileName){
     if(m_root[fileName].isNull() == true){
         char buf0[512];

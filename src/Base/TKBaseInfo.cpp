@@ -110,19 +110,14 @@ void TKBaseInfo::initDevice() {
     std::vector<VkQueueFamilyProperties> queueFamilyProperties(deviceQueueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(m_info->physicalDevice, &deviceQueueFamilyCount,
                                              queueFamilyProperties.data());
-    /*
-    for(int i=0; i<deviceQueueFamilyCount; ++i){
-        TKLog("queue flags:0x%x, queue count: %d\n",
-              queueFamilyProperties[i].queueFlags, queueFamilyProperties[i].queueCount);
-    }
-    */
+	
     VkDeviceCreateInfo deviceInfo;
-    deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceInfo.pNext = nullptr;
     deviceInfo.flags = 0;
     std::vector<const char *> layerNames = {
         "VK_LAYER_LUNARG_core_validation",
-        "LK_LAYER_LUNARG_parameter_validation",
+        "VK_LAYER_LUNARG_parameter_validation",
     };
     deviceInfo.enabledLayerCount = layerNames.size(); 
     deviceInfo.ppEnabledLayerNames = layerNames.data();
@@ -133,29 +128,6 @@ void TKBaseInfo::initDevice() {
     deviceInfo.ppEnabledExtensionNames = extensions.data();
     deviceInfo.pEnabledFeatures = nullptr;
 
-    /*
-    std::vector<float *>priorityArr;
-    std::vector<float> priority;
-    std::vector<VkDeviceQueueCreateInfo> deviceQueueInfo(deviceQueueFamilyCount);
-    for(int i=0; i<deviceQueueFamilyCount;++i){
-        deviceQueueInfo[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        deviceQueueInfo[i].pNext = nullptr;
-        deviceQueueInfo[i].flags = 0;
-        deviceQueueInfo[i].queueFamilyIndex = i;
-        deviceQueueInfo[i].queueCount = queueFamilyProperties[i].queueCount;
-        priority.resize(queueFamilyProperties[i].queueCount);
-        for(int j=0; j<queueFamilyProperties[i].queueCount; ++j){
-            priority[j] = 5e-1;
-        }
-        uint32_t queueCount = queueFamilyProperties[i].queueCount;
-        float *p = (float*)malloc(sizeof(float)*queueCount);
-        memcpy(p, priority.data(), sizeof(float)*queueCount);
-        deviceQueueInfo[i].pQueuePriorities = p;
-        priorityArr.push_back(p);
-    }
-    deviceInfo.queueCreateInfoCount = deviceQueueInfo.size();
-    deviceInfo.pQueueCreateInfos    = deviceQueueInfo.data();
-    */
     std::vector<VkDeviceQueueCreateInfo> deviceQueueInfo(1);
     if(m_info->graphicsQueueFamily != m_info->presentQueueFamily){
         deviceQueueInfo.resize(2);
@@ -377,9 +349,12 @@ void TKBaseInfo::initCommandPool() {
 }
 
 void TKBaseInfo::initRenderPass(){
-    m_renderPass = TKRenderPass::createRenderPass();
-    m_info->renderPass = m_renderPass->renderPass();
+//    m_renderPass = TKRenderPass::createRenderPass();
+	m_renderPass = TKRenderPass::createWithJson("renderpass.json");
+	m_info->renderPass = m_renderPass->renderPass();
     m_info->colorAttachmentCount = m_renderPass->ColorAttachCount();
+
+	
 }
 
 void TKBaseInfo::initFencesAndSemaphores(){

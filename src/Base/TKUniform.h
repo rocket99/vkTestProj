@@ -1,6 +1,5 @@
 //
-//TKUniform.h
-//2018-12-30
+//TKUniform.h 2018-12-30
 
 #ifndef __TKUniform_h__
 #define __TKUniform_h__
@@ -29,3 +28,5 @@ private:
 
 
 #endif
+
+

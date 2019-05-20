@@ -1,0 +1,63 @@
+{
+    "subpassDesc":[
+	{
+	    "pipelineBindPoint":"VK_PIPELINE_BIND_POINT_GRAPHIC",
+	    "inputAttachments":[
+		{
+		    "attachment":0,
+		    "layout":"VK_IMAGE_LAYOUT_GENERAL"
+		}
+	    ],
+	    "colorAttachments":[
+		{
+		    "attachment":0,
+		    "layout":"VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL"
+		}
+	    ],
+	    "depthStencilAttachment":[
+		{
+		    "attachment":1,
+		    "layout":"VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL"
+		}
+	    ],
+	    "resolveAttachments":[],
+	    "preserveAttachments":[]
+	}
+    ],
+
+    "attachDesc":[
+	{
+	    "format":"VK_FORMAT_B8G8R8A8_SNORM",
+	    "loadOp":"VK_ATTACHMENT_LOAD_OP_CLEAR",
+	    "storeOp":"VK_ATTACHMENT_STORE_OP_STORE",
+	    "stencilLoadOp":"VK_ATACHMENT_LOAD_OP_DONT_CARE",
+	    "stencilStoreOp":"VK_ATTACHMENT_STORE_OP_DONT_CARE",
+	    "initialLayout":"VK_IMAGE_LAYOUT_UNDEFINED",
+	    "finalLayout":"VK_IMAGE_LAYOUT_PRESENT_SRC_KHR",
+	    "samples":"VK_SAMPLE_COUNT_1_BIT"
+	},
+	{
+	    "format":"VK_FORMAT_D32_SFLOAT",
+	    "loadOp":"VK_ATTACHMENT_LOAD_OP_CLEAR",
+	    "storeOp":"VK_ATTACHMENT_STORE_OP_DONT_CLEAR",
+	    "stencilLoadOp":"VK_ATACHMENT_LOAD_OP_DONT_CARE",
+	    "stencilStoreOp":"VK_ATTACHMENT_STORE_OP_STORE",
+	    "initialLayout":"VK_IMAGE_LAYOUT_UNDEFINED",
+	    "finalLayout":"VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL",
+	    "samples":"VK_SAMPLE_COUNT_1_BIT"
+	}
+    ],
+    
+    "dependencies":[
+	{
+	    "dependencyFlags":0,
+	    "srcSubpass":0,
+	    "dstSubpass":1,
+	    "srcStageMask":"VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT",
+	    "dstStageMask":"VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT",
+	    "srcAccessMask":["VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT"],
+	    "dstAccessMask":["VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT"]
+	}
+    ]
+}
+

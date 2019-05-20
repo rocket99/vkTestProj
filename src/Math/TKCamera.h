@@ -5,7 +5,7 @@
 #ifndef __TKCamera_h__
 #define __TKCamera_h__
 
-#include "TKPrefix.h"
+#include "../TKPrefix.h"
 #include "TKDataType.h"
 #include "TKVector.h"
 #include "TKMatrix.h"
