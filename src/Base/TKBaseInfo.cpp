@@ -303,11 +303,12 @@ void TKBaseInfo::initFramebuffers(){
     info.height          = SCREEN_HEIGHT;
     info.layers          = 1;
     uint32_t colorAttachCount = m_info->colorAttachmentCount;
+	TKLog("attachment count %u\n", colorAttachCount);
     std::vector<VkImageView> attachments(colorAttachCount+1);
     m_info->framebuffers.resize(m_info->swapchainImageViews.size());
     for(uint32_t i=0; i<m_info->swapchainImageViews.size();++i){
         for(uint32_t j=0; j<colorAttachCount; ++j){
-            attachments[j]        = m_info->swapchainImageViews[i];
+            attachments[j] = m_info->swapchainImageViews[i];
         }
         attachments[colorAttachCount] = m_info->depthImageview;
         info.attachmentCount  = attachments.size();
@@ -349,10 +350,10 @@ void TKBaseInfo::initCommandPool() {
 }
 
 void TKBaseInfo::initRenderPass(){
-//    m_renderPass = TKRenderPass::createRenderPass();
 	m_renderPass = TKRenderPass::createWithJson("renderpass.json");
 	m_info->renderPass = m_renderPass->renderPass();
-    m_info->colorAttachmentCount = m_renderPass->ColorAttachCount();
+	//render pass has included depth attachment 
+    m_info->colorAttachmentCount = m_renderPass->ColorAttachCount()-1;
 
 	
 }

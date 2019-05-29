@@ -34,7 +34,7 @@ public:
 	static VkAccessFlagBits VkAccessFlagBitFrom(const std::string &str);
 	static VkImageLayout VkImageLayoutFromString(const std::string &str);
 	static VkPipelineBindPoint VkPipelineBindPointFromString(const std::string &str);
-
+	static VkDependencyFlagBits VkDependencyFlagBitsFromString(const std::string &str);
 	
     Json::Value VkConfigFrom(const std::string &fileName);
     static TKVkUtility *Utility();

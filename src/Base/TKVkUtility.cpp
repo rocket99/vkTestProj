@@ -113,10 +113,12 @@ VkShaderStageFlagBits TKVkUtility::VkShaderStageFlagBitsFrom(const std::string &
 }
 
 VkPipelineStageFlagBits TKVkUtility::VkPipelineStageFlagBitFrom(const std::string &str){
-	TKLog("%s\n", str.c_str());
 	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
 	Json::Value pipelineStage = root["PipelineStageFlagBit"];
-	printf("%s\n", pipelineStage[str].asCString());
+	if(pipelineStage[str].isString()!=true){
+		TKLog("error wrong VkPipelineStageFlagBit: %s\n", str.c_str());
+		return VkPipelineStageFlagBits(-1);
+	}
     uint32_t value = strtoul(pipelineStage[str].asCString(), nullptr, 16);
 	return VkPipelineStageFlagBits(value);
 }
@@ -152,6 +154,13 @@ VkImageLayout TKVkUtility::VkImageLayoutFromString(const std::string &str){
 VkPipelineBindPoint TKVkUtility::VkPipelineBindPointFromString(const std::string &str){
 	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
 	return VkPipelineBindPoint(root["PipelineBindPoint"][str].asUInt());
+}
+
+VkDependencyFlagBits TKVkUtility::VkDependencyFlagBitsFromString(const std::string &str){
+	Json::Value root = TKVkUtility::Utility()->VkConfigFrom("vkConfig.json");
+	Json::Value pipelineStage = root["DependencyFlagBits"];
+    uint32_t value = strtoul(pipelineStage[str].asCString(), nullptr, 16);
+	return VkDependencyFlagBits(value);	
 }
 
 Json::Value TKVkUtility::VkConfigFrom(const std::string &fileName){

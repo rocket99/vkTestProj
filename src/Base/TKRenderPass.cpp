@@ -78,7 +78,8 @@ bool TKRenderPass::initWithJson(const std::string &fileName){
 	}
 	info.attachmentCount = attachmentDescArr.size();
 	info.pAttachments = attachmentDescArr.data();
-
+	m_colorAttachmentCount = info.attachmentCount;
+	
 	Json::Value dependencyValue = root["dependencies"];
 	if(false == dependencyValue.isArray()){
 		return false;
@@ -103,7 +104,7 @@ bool TKRenderPass::initWithJson(const std::string &fileName){
 	if(ret != VK_SUCCESS){
 		return false;
 	}
-	TKLog("init render pass with json success");
+	TKLog("init render pass with json success\n");
 	return true;
 }
 
@@ -117,26 +118,36 @@ uint32_t TKRenderPass::ColorAttachCount() const {
 
 VkSubpassDependency TKRenderPass::_getDependencyFromJson(const Json::Value &value){
 	VkSubpassDependency dependency;
-	dependency.dependencyFlags = value["dependencyFlags"].asUInt();
-	dependency.srcSubpass = value["srcSubpass"].asUInt();
-	dependency.dstSubpass = value["dstSubpass"].asUInt();
+	dependency.dependencyFlags = TKVkUtility::VkDependencyFlagBitsFromString(value["dependencyFlags"].asString());
+	if(value["srcSubpass"].isIntegral() == true){
+		dependency.srcSubpass = value["srcSubpass"].asUInt();
+	}
+	if(value["srcSubpass"].isString() == true){
+		if(value["srcSubpass"].asString() == "VK_SUBPASS_EXTERNAL"){
+			dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		}
+	}
+	if(value["dstSubpass"].isIntegral()==true){
+		dependency.dstSubpass = value["dstSubpass"].asUInt();
+	}else if(value["dstSubpass"].isString()==true){
+		if(value["dstSubpass"].asString() == "VK_SUBPASS_EXTERNAL"){
+			dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		}
+	}
+
 	dependency.srcStageMask = TKVkUtility::VkPipelineStageFlagBitFrom(value["srcStageMask"].asString());
 	dependency.dstStageMask = TKVkUtility::VkPipelineStageFlagBitFrom(value["dstStageMask"].asString());
 	if(value["srcAccessMask"].isArray()==true){
-		TKLog("access mask: %s\n", value["srcAccessMask"][0].asCString());
 		uint32_t accessMask = TKVkUtility::VkAccessFlagBitFrom(value["srcAccessMask"][0].asString());
 		for(uint32_t i=1; i<value["srcAccessMask"].size(); ++i){
-			TKLog("access mask: %s\n", value["srcAccessMask"][i].asCString());
 			accessMask |= TKVkUtility::VkAccessFlagBitFrom(value["srcAccessMask"][i].asString());
 		}
 		dependency.srcAccessMask = accessMask;
 	}
 
 	if(value["dstAccessMask"].isArray()==true){
-		TKLog("access mask: %s\n", value["srcAccessMask"][0].asCString());
 		uint32_t accessMask = TKVkUtility::VkAccessFlagBitFrom(value["dstAccessMask"][0].asString());;
 		for(uint32_t i=1; i<value["dstAccessMask"].size(); ++i){
-			TKLog("access mask: %s\n", value["srcAccessMask"][i].asCString());
 			accessMask |= TKVkUtility::VkAccessFlagBitFrom(value["dstAccessMask"][i].asString());
 		}
 		dependency.dstAccessMask = accessMask;
@@ -200,7 +211,7 @@ VkSubpassDescription TKRenderPass::_getSubpassDescFromJson(const Json::Value &va
 	subpassDesc.pDepthStencilAttachment = m_allAttachmentRefInfo["depth"+idxStr].data();
 	subpassDesc.preserveAttachmentCount = m_IntAttachInfo["preserve"+idxStr].size();
 	subpassDesc.pPreserveAttachments = m_IntAttachInfo["preserve"+idxStr].data();
-	
+	subpassDesc.flags = 0;
 	return subpassDesc;
 }
 
@@ -214,6 +225,7 @@ VkAttachmentDescription TKRenderPass::_getAttachmentDescription(const Json::Valu
 	attachDesc.initialLayout = TKVkUtility::VkImageLayoutFromString(value["initialLayout"].asString());
 	attachDesc.finalLayout = TKVkUtility::VkImageLayoutFromString(value["finalLayout"].asString());
 	attachDesc.samples = TKVkUtility::VkSampleCountFlagBitFrom(value["samples"].asString());
+	attachDesc.flags = VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
 	return attachDesc;
 }
 
