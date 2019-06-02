@@ -85,7 +85,7 @@ bool TKJsonPipeline::initWithJsonFile(const char *fileName){
     pipelineInfo.subpass             = 0;
     pipelineInfo.basePipelineHandle  = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex   = -1;
-
+	
     VkResult ret = vkCreateGraphicsPipelines(VK_INFO->device, VK_NULL_HANDLE,
                                              1, &pipelineInfo, nullptr, &m_pipeline);
 	if (ret != VK_SUCCESS) {
@@ -364,6 +364,7 @@ bool TKJsonPipeline::initPipelineLayoutFromJson(const Json::Value &value){
 	if(m_pipelineLayout == nullptr){
 		return false;
 	}
+	TKLog("pipeline layout %p\n", m_pipelineLayout->pipelineLayout());
 	return true;
 }
 

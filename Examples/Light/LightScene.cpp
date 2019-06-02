@@ -30,7 +30,7 @@ bool LightScene::initLightScene(uint32_t lightNum){
     if(m_rootNode->initialize() == false){
         delete m_rootNode; 
 	}
-
+	TKLog("create pipeline in light scene\n");
 	m_pipeline = TKJsonPipeline::createFromJson("first_pipeline.json");
 	
     m_spaceSize = Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);

@@ -42,7 +42,7 @@ using namespace std;
 
 #define TK_LOG_ENABLED  1
 #if  TK_LOG_ENABLED
-#define TKLog(format, ...)  printf("%s[%d]%s:" format, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define TKLog(format, ...)  printf("%s[%d]\n    %s: " format, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
 #define TKLog(format, ...)
 #endif

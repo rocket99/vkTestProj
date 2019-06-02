@@ -68,7 +68,7 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
 		layoutBind.pImmutableSamplers = nullptr;
         bindings.push_back(layoutBind);
     }
-    TKLog("binding count %zu\n", bindings.size());
+    TKLog("binding count %lu, data %p\n", bindings.size(), bindings.data());
     uint32_t swapCount = VK_INFO->swapchainImageViews.size();
     m_descSets.resize(swapCount);
     m_descSetLayouts.resize(swapCount);
@@ -95,7 +95,9 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         TKLog("init pipeline layout failed!\n");
         return false;
     }
-	TKLog("init pipeline layout success!\n");
+	TKLog("init pipeline layout %p success!\n", m_layout);
+	
+	
     for(uint32_t i=0; i<swapCount; ++i){
         VkDescriptorSetAllocateInfo descSetAllocInfo;
         descSetAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -103,9 +105,8 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         descSetAllocInfo.descriptorPool = VK_INFO->descriptorPool;
         descSetAllocInfo.descriptorSetCount = 1;
         descSetAllocInfo.pSetLayouts = &m_descSetLayouts[i];
-		TKLog("-------%d------\n", i);
         vkAllocateDescriptorSets(device, &descSetAllocInfo, &m_descSets[i]);
-		TKLog("alloc descriptor sets\n");
-    }
+		TKLog("alloc descriptor sets %p\n", m_descSets[i]);
+	}
     return true;
 }
