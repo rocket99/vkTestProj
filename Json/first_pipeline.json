@@ -15,7 +15,10 @@
         }
     ],
 
-    "VertexInput":{},
+    "VertexInput":{
+	"VertexBindDesc":[],
+	"VertexAttribDesc":[]
+    },
 
     "InputAssemble":{
         "topology":"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST",

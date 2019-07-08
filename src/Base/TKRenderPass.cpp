@@ -78,7 +78,6 @@ bool TKRenderPass::initWithJson(const std::string &fileName){
 	}
 	info.attachmentCount = attachmentDescArr.size();
 	info.pAttachments = attachmentDescArr.data();
-	m_colorAttachmentCount = info.attachmentCount;
 	
 	Json::Value dependencyValue = root["dependencies"];
 	if(false == dependencyValue.isArray()){
@@ -113,6 +112,7 @@ VkRenderPass TKRenderPass::renderPass() const {
 }
 
 uint32_t TKRenderPass::ColorAttachCount() const {
+	TKLog("color attachment count %d\n", m_colorAttachmentCount);
     return m_colorAttachmentCount;
 }
 
@@ -165,7 +165,8 @@ VkAttachmentReference TKRenderPass::_getAttachmentRefFromJson(const Json::Value 
 VkSubpassDescription TKRenderPass::_getSubpassDescFromJson(const Json::Value &value, uint32_t idx){
 	std::string idxStr = std::to_string(idx);
 	VkSubpassDescription subpassDesc;
-	subpassDesc.pipelineBindPoint = TKVkUtility::VkPipelineBindPointFromString(value["pipelineBindPoint"].asString());
+	subpassDesc.pipelineBindPoint =
+		TKVkUtility::VkPipelineBindPointFromString(value["pipelineBindPoint"].asString());
 	std::vector<VkAttachmentReference> inputRefArr;
 	if(value["inputAttachments"].isArray()==true){
 		for(uint32_t i=0; i<value["inputAttachments"].size(); ++i){
@@ -173,24 +174,28 @@ VkSubpassDescription TKRenderPass::_getSubpassDescFromJson(const Json::Value &va
 		}
 	}
 	m_allAttachmentRefInfo["input"+idxStr] = inputRefArr;
+
 	std::vector<VkAttachmentReference> colorRefArr;
 	if(value["colorAttachments"].isArray()==true){
 		for(uint32_t i=0; i<value["colorAttachments"].size(); ++i){
-			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["colorAttachments"][i]));
+			colorRefArr.push_back(this->_getAttachmentRefFromJson(value["colorAttachments"][i]));
 		}
 	}
 	m_allAttachmentRefInfo["color"+idxStr] = colorRefArr;
+	m_colorAttachmentCount = colorRefArr.size();
+	
 	std::vector<VkAttachmentReference> depthRefArr;
 	if(value["depthAttachments"].isArray()==true){
 		for(uint32_t i=0; i<value["depthAttachments"].size(); ++i){
-			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["depthAttachments"][i]));
+			depthRefArr.push_back(this->_getAttachmentRefFromJson(value["depthAttachments"][i]));
 		}
 	}
 	m_allAttachmentRefInfo["depth"+idxStr] = depthRefArr;
+
 	std::vector<VkAttachmentReference> resolveRefArr;
 	if(value["resolveAttachments"].isArray()==true){
 		for(uint32_t i=0; i<value["resolveAttachments"].size(); ++i){
-			inputRefArr.push_back(this->_getAttachmentRefFromJson(value["resolveAttachments"][i]));
+			resolveRefArr.push_back(this->_getAttachmentRefFromJson(value["resolveAttachments"][i]));
 		}
 	}
 	m_allAttachmentRefInfo["resolve"+idxStr] = resolveRefArr;
@@ -228,5 +233,4 @@ VkAttachmentDescription TKRenderPass::_getAttachmentDescription(const Json::Valu
 	attachDesc.flags = VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
 	return attachDesc;
 }
-
 

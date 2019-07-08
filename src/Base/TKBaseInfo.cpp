@@ -13,7 +13,6 @@ TKBaseInfo::TKBaseInfo() {
 TKBaseInfo::~TKBaseInfo() {
     delete m_renderPass;
     delete m_depthImageView;
-    TKLog("destruct TKBaseInfo\n");
     for(uint32_t i=0; i<m_info->framebuffers.size(); ++i){
         vkDestroyFramebuffer(m_info->device, m_info->framebuffers[i], nullptr);
     }
@@ -36,7 +35,11 @@ TKBaseInfo::~TKBaseInfo() {
     if(m_info->commandPool != VK_NULL_HANDLE){
         vkDestroyCommandPool(m_info->device, m_info->commandPool, nullptr);
     }
-    
+
+	if(m_info->descriptorPool != VK_NULL_HANDLE){
+		vkDestroyDescriptorPool(m_info->device, m_info->descriptorPool, nullptr);
+	}
+	
     if(m_info->swapchain != VK_NULL_HANDLE){
         vkDestroySwapchainKHR(m_info->device, m_info->swapchain, nullptr);
     }
@@ -303,7 +306,7 @@ void TKBaseInfo::initFramebuffers(){
     info.height          = SCREEN_HEIGHT;
     info.layers          = 1;
     uint32_t colorAttachCount = m_info->colorAttachmentCount;
-	TKLog("attachment count %u\n", colorAttachCount);
+	TKLog("color attachment count %u\n", colorAttachCount);
     std::vector<VkImageView> attachments(colorAttachCount+1);
     m_info->framebuffers.resize(m_info->swapchainImageViews.size());
     for(uint32_t i=0; i<m_info->swapchainImageViews.size();++i){
@@ -353,8 +356,7 @@ void TKBaseInfo::initRenderPass(){
 	m_renderPass = TKRenderPass::createWithJson("renderpass.json");
 	m_info->renderPass = m_renderPass->renderPass();
 	//render pass has included depth attachment 
-    m_info->colorAttachmentCount = m_renderPass->ColorAttachCount()-1;
-
+    m_info->colorAttachmentCount = m_renderPass->ColorAttachCount();
 	
 }
 
@@ -436,7 +438,7 @@ void TKBaseInfo::displayDeviceLayers(){
     std::vector<VkLayerProperties> layerProperties(layerCount);
     vkEnumerateDeviceLayerProperties(m_info->physicalDevice, &layerCount, layerProperties.data());
     TKLog("device layer:\n");
-    for(int i=0; i<layerCount;++i){
+    for(uint32_t i=0; i<layerCount;++i){
         TKLog("\t%s:%s\n", layerProperties[i].layerName, layerProperties[i].description);
     }
     

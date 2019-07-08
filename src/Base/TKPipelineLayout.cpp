@@ -69,10 +69,10 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         bindings.push_back(layoutBind);
     }
     TKLog("binding count %lu, data %p\n", bindings.size(), bindings.data());
-    uint32_t swapCount = VK_INFO->swapchainImageViews.size();
+    uint32_t swapCount = 1;//VK_INFO->swapchainImageViews.size();
     m_descSets.resize(swapCount);
     m_descSetLayouts.resize(swapCount);
-    for(uint32_t i=0; i<swapCount; ++i){
+    //for(uint32_t i=0; i<swapCount; ++i){
         std::vector<VkDescriptorSetLayoutCreateInfo> setLayoutCreateInfo(1);
         setLayoutCreateInfo[0].sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         setLayoutCreateInfo[0].pNext = nullptr;
@@ -80,8 +80,8 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         setLayoutCreateInfo[0].bindingCount = bindings.size();
         setLayoutCreateInfo[0].pBindings    = bindings.data();
         vkCreateDescriptorSetLayout(device, &setLayoutCreateInfo[0],
-                                    nullptr, &m_descSetLayouts[i]);
-    }
+                                    nullptr, &m_descSetLayouts[0]);
+		//}
     
     VkPipelineLayoutCreateInfo layoutInfo;
     layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -96,8 +96,10 @@ bool TKPipelineLayout::initWithJsonValue(const Json::Value &value){
         return false;
     }
 	TKLog("init pipeline layout %p success!\n", m_layout);
-	
-	
+
+	if(bindings.size() == 0){
+		return true;
+	}	
     for(uint32_t i=0; i<swapCount; ++i){
         VkDescriptorSetAllocateInfo descSetAllocInfo;
         descSetAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;

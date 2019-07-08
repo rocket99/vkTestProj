@@ -31,7 +31,7 @@ bool LightScene::initLightScene(uint32_t lightNum){
         delete m_rootNode; 
 	}
 	TKLog("create pipeline in light scene\n");
-	m_pipeline = TKJsonPipeline::createFromJson("first_pipeline.json");
+	m_pipeline = TKJsonPipeline::createFromJson("light_pipeline.json");
 	
     m_spaceSize = Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_camera = TKCamera::createWithLookat(Float3(0.0, 0.0, 0.0),
@@ -119,27 +119,29 @@ void LightScene::drawObjects(){
     eyePos /= Float3(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH);
     m_eyeUniform->updateData(data, sizeof(float)*3, 0);
 
-	//VkDescriptorSet descSet = m_pipeline->descriptorSet(m_currentIdx);
-    VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
+	VkDescriptorSet descSet = m_pipeline->descriptorSet(m_currentIdx);
+	VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
+/*
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline->pipeline());
 	vkCmdDraw(cmdBuf, 6, 1, 0, 0);
+*/
 	
-//  VkWriteDescriptorSet cameraDescSet = m_cameraUniform->writeDescSet(descSet, 0);
-//	VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
-//  VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
-//	m_rootNode->addWriteDescSet(cameraDescSet);
-//	m_rootNode->addWriteDescSet(lightDescSet);
-//	m_rootNode->addWriteDescSet(eyeDescSet);
-//	m_rootNode->draw(cmdBuf, m_currentIdx);
+	VkWriteDescriptorSet cameraDescSet = m_cameraUniform->writeDescSet(descSet, 0);
+	VkWriteDescriptorSet lightDescSet = m_lightUniform->writeDescSet(descSet, 3);
+	VkWriteDescriptorSet eyeDescSet = m_eyeUniform->writeDescSet(descSet, 4);
+	m_rootNode->addWriteDescSet(cameraDescSet);
+	m_rootNode->addWriteDescSet(lightDescSet);
+	m_rootNode->addWriteDescSet(eyeDescSet);
+	m_rootNode->draw(cmdBuf, m_currentIdx);
 
 	angle += 0.25*M_PI/180.0;
     m_camera->setPosition(600.0*cos(angle), 400.0, 600.0*sin(angle));
-//    m_camera->updateUniformData();
+    m_camera->updateUniformData();
     
-//    TKBaseNode *node = m_rootNode->subNodeWithTag(2);
-//    if(node != nullptr){
-//        node->rotateX(0.5*M_PI/180.0);
-//    }
+    TKBaseNode *node = m_rootNode->subNodeWithTag(2);
+    if(node != nullptr){
+        node->rotateX(0.5*M_PI/180.0);
+    }
 }
 
 

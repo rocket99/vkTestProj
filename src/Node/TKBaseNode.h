@@ -7,8 +7,8 @@
 
 #include "TKObject.h"
 #include "TKDataDef.h"
-#include "TKUniform.h"
-#include "TKJsonPipeline.h"
+#include "../Base/TKUniform.h"
+#include "../Base/TKJsonPipeline.h"
 
 
 class TKNodeList {

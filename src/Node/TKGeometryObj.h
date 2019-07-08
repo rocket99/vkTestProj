@@ -91,7 +91,10 @@ protected:
         float radius;
     };
     disk_para *m_diskPara;
+private:
+	uint32_t getMemoryTypeIndex(VkMemoryRequirements memoryReq);
 };
 
 
 #endif
+

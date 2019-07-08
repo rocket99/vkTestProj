@@ -70,9 +70,9 @@ void BasicScene::drawObjects(){
     m_uniform->updateData(data, sizeof(float)*4, 0);
     m_camera->viewProjMatrix().mapToBuffer(data);
     m_uniform->updateData(data, sizeof(float)*16, 4);
-    /*
+    
     VkCommandBuffer cmdBuf = TKBaseInfo::Info()->commandBuffers[m_currentIdx];
     vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline->pipeline());
-	*/
+	
 }
 

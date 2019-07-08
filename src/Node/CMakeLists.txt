@@ -1,8 +1,8 @@
 
 #include_directories("${VULKAN_SDK}/include")
 #include_directories("..")
-#include_directories("../Math")
-#include_directories("../Base")
+include_directories("../Math")
+include_directories("../Base")
 
 file(GLOB cpp_src "*.cpp")
 file(GLOB header_src "*.h")

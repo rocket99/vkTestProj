@@ -70,7 +70,7 @@ void TKScene::updateDrawCommand(){
     
     VkImageSubresourceRange subResRange;
     subResRange.aspectMask      = VK_IMAGE_ASPECT_COLOR_BIT;
-    subResRange.baseMipLevel   = 0;
+    subResRange.baseMipLevel    = 0;
     subResRange.levelCount      = 1;
     subResRange.baseArrayLayer  = 0;
     subResRange.layerCount      = 1;
@@ -87,7 +87,7 @@ void TKScene::updateDrawCommand(){
     beginInfo.framebuffer = TKBaseInfo::Info()->framebuffers[m_currentIdx];
     beginInfo.renderArea  = { {0, 0}, {SCREEN_WIDTH, SCREEN_HEIGHT} };
     std::vector<VkClearValue> clearValues(2);
-	const float values[] = {0.5, 0.65, 0.75, 1.0};
+	const float values[] = {0.45, 0.65, 0.75, 1.0};
     memcpy(clearValues[0].color.float32, values, sizeof(float)*4);
     clearValues[1].depthStencil.depth = 1.0f;
     clearValues[1].depthStencil.stencil = 0.0f;
@@ -102,7 +102,6 @@ void TKScene::updateDrawCommand(){
     vkCmdSetScissor(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 0, 1, &rect);
     vkCmdSetLineWidth(TKBaseInfo::Info()->commandBuffers[m_currentIdx], 1.0);
 
-	
     this->drawObjects();
 
 	

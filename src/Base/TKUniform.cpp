@@ -61,6 +61,7 @@ bool TKUniform::initWithSize(uint32_t size){
     allocInfo.pNext = nullptr;
     allocInfo.allocationSize = memReqInfo.size;
     allocInfo.memoryTypeIndex = TKBaseInfo::getMemoryTypeIndex(memReqInfo);
+	printf("uniform memory index %d\n", allocInfo.memoryTypeIndex);
     ret = vkAllocateMemory(VK_INFO->device, &allocInfo, nullptr, &m_memory);
     if(ret != VK_SUCCESS){
         TKLog("uniform alloc memory failed!\n");
@@ -89,6 +90,8 @@ VkWriteDescriptorSet TKUniform::writeDescSet(const VkDescriptorSet &descSet,
     VkDeviceSize commitSize;
     vkGetDeviceMemoryCommitment(device, m_memory, &commitSize);
     vkMapMemory(device, m_memory, 0, commitSize, 0, &pData);
+	TKLog("gpu memory %p\n", pData);
+	
     memcpy(pData, m_data, sizeof(float)*m_size);
     vkUnmapMemory(device, m_memory);
 

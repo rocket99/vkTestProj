@@ -22,8 +22,10 @@ int main(int argc, char *argv[])
     TKBaseInfo::share()->initFencesAndSemaphores();
 
 	TKModuleManager::prepareAllModules();
+
     LightScene *mainScene = LightScene::createLightScene(1);
-    window->setScene(mainScene);
+
+	window->setScene(mainScene);
     window->startRefresh();
 
 	TKModuleManager::purge();

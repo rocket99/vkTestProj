@@ -25,16 +25,16 @@
 	    "format":"VK_FORMAT_B8G8R8A8_UNORM",
 	    "loadOp":"VK_ATTACHMENT_LOAD_OP_CLEAR",
 	    "storeOp":"VK_ATTACHMENT_STORE_OP_STORE",
-	    "stencilLoadOp":"VK_ATACHMENT_LOAD_PO_DONT_CARE",
-	    "stencilStoreOp":"VK_ATTACHMENT_STORE_OP_STORE",
+	    "stencilLoadOp":"VK_ATACHMENT_LOAD_DONT_CARE",
+	    "stencilStoreOp":"VK_ATTACHMENT_STORE_OP_DONT_CARE",
 	    "initialLayout":"VK_IMAGE_LAYOUT_UNDEFINED",
 	    "finalLayout":"VK_IMAGE_LAYOUT_PRESENT_SRC_KHR",
 	    "samples":"VK_SAMPLE_COUNT_1_BIT"
 	},
 	{
 	    "format":"VK_FORMAT_D32_SFLOAT",
-	    "loadOp":"VK_ATTACHMENT_LOAD_OP_DONT_CARE",
-	    "storeOp":"VK_ATTACHMENT_STORE_OP_STORE",
+	    "loadOp":"VK_ATTACHMENT_LOAD_OP_CLEAR",
+	    "storeOp":"VK_ATTACHMENT_STORE_OP_DONT_CARE",
 	    "stencilLoadOp":"VK_ATACHMENT_LOAD_OP_CLEAR",
 	    "stencilStoreOp":"VK_ATTACHMENT_STORE_OP_STORE",
 	    "initialLayout":"VK_IMAGE_LAYOUT_UNDEFINED",
@@ -43,5 +43,24 @@
 	}
     ],
     
-    "dependencies":[]
+    "dependencies":[
+	{
+	    "dependencyFlags":"VK_DEPENDENCY_BY_REGION_BIT",
+	    "srcSubpass":"VK_SUBPASS_EXTERNAL",
+	    "dstSubpass":0,
+	    "srcStageMask":"VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT",
+	    "dstStageMask":"VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+	    "srcAccessMask":["VK_ACCESS_MEMORY_READ_BIT"],
+	    "dstAccessMask":["VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT"]
+	},
+	{
+	    "dependencyFlags":"VK_DEPENDENCY_BY_REGION_BIT",
+	    "srcSubpass":0,
+	    "dstSubpass":"VK_SUBPASS_EXTERNAL",
+	    "srcStageMask":"VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT",
+	    "dstStageMask":"VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT",
+	    "srcAccessMask":["VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", "VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT"],
+	    "dstAccessMask":["VK_ACCESS_MEMORY_READ_BIT"]
+	}
+    ]
 }

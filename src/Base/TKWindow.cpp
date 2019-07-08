@@ -55,6 +55,7 @@ bool TKWindow::initXcbWindow(uint32_t width, uint32_t height) {
     xcb_map_window(m_connection, m_window);
     xcb_flush(m_connection);
 
+	
     xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
                         XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 8, strlen("Triangle"), "Triangle");
     xcb_flush(m_connection);
@@ -97,9 +98,9 @@ void TKWindow::initInstance() {
     info.flags                  = 0;
     info.pApplicationInfo       = &appInfo;
     std::vector<const char *> enabledLayers = {
-		"VK_LAYER_LUNARG_core_validation",
-		//"VK_LAYER_LUNARG_vktrace",
-		"VK_LAYER_LUNARG_standard_validation"
+											   //"VK_LAYER_LUNARG_core_validation",
+			"VK_LAYER_LUNARG_vktrace",
+			"VK_LAYER_LUNARG_standard_validation"
 	};
 	/*
     for(uint32_t i=0; i<layerCount; ++i){
@@ -118,7 +119,8 @@ void TKWindow::initInstance() {
 	/*
     for(uint32_t i=0; i<instExtensionCount; ++i){
         enabledExtensions.push_back(instExtensions[i].extensionName);
-		}*/
+	}
+	*/
 	info.enabledExtensionCount   = enabledExtensions.size();
     info.ppEnabledExtensionNames = enabledExtensions.data();
 
@@ -222,7 +224,7 @@ void TKWindow::startRefresh() {
                 m_scene->stopDraw();
             }
         }
-        usleep(1000000);
+        usleep(10000);
     }
     
     TKLog("refresh end!\n");

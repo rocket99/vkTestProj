@@ -138,6 +138,7 @@ bool TKJsonPipeline::initVertexInputStateFromJson(const Json::Value &value){
     m_vertInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     m_vertInputState.pNext = nullptr;
     m_vertInputState.flags = 0;
+	printf("%s\n", value.toStyledString().c_str());
     Json::Value bindValues = value["VertexBindDesc"];
     if(bindValues.isArray() == false){
         return false;
@@ -165,10 +166,12 @@ bool TKJsonPipeline::initVertexInputStateFromJson(const Json::Value &value){
     
 	m_vertInputState.vertexBindingDescriptionCount = m_inputBindDesc.size();
     m_vertInputState.pVertexBindingDescriptions = m_inputBindDesc.data();
+	printf("attribute desc count: %lu\n", m_inputAttribDesc.size());
     m_vertInputState.vertexAttributeDescriptionCount = m_inputAttribDesc.size();
     m_vertInputState.pVertexAttributeDescriptions = m_inputAttribDesc.data();
-
-    return true;
+	
+	this->debugVertexInputState();
+	return true;
 }
 
 bool TKJsonPipeline::initAssembleStateFromJson(const Json::Value &value){
@@ -303,7 +306,7 @@ bool TKJsonPipeline::initColorBlendStateFromJson(const Json::Value &value){
     m_colorBlendState.logicOp            = TKVkUtility::VkLogicOpFrom(value["logicOp"].asString());
     if(value["pAttachments"].isArray()==true){
         m_blendAttachArr.resize(value["pAttachments"].size());
-        for(int i=0; i<value["pAttachments"].size(); ++i){
+        for(uint32_t i=0; i<value["pAttachments"].size(); ++i){
             Json::Value tmp = value["pAttachments"][i];
             m_blendAttachArr[i].blendEnable = TKVkUtility::VkBoolFrom(tmp["blendEnable"].asString());
             std::string srcColorFactor = tmp["srcColorBlendFactor"].asString();
