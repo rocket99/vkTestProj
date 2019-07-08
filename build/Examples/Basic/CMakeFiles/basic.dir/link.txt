@@ -1,0 +1,1 @@
+/usr/bin/clang++     CMakeFiles/basic.dir/basic_main.cpp.o CMakeFiles/basic.dir/basic_scene.cpp.o  -o basic  -L/usr/local/VulkanSDK/1.1.108.0/x86_64/lib -Wl,-rpath,/usr/local/VulkanSDK/1.1.108.0/x86_64/lib ../../src/Math/libTKMath.a ../../src/Base/libTKBase.a ../../src/Node/libTKNode.a -lvulkan -ljsoncpp -ljpeg -lpng -lpthread -lxcb 

@@ -1,0 +1,1 @@
+/usr/bin/clang++     CMakeFiles/light.dir/LightScene.cpp.o CMakeFiles/light.dir/light_main.cpp.o  -o light  -L/usr/local/VulkanSDK/1.1.108.0/x86_64/lib -Wl,-rpath,/usr/local/VulkanSDK/1.1.108.0/x86_64/lib ../../src/Base/libTKBase.a ../../src/Math/libTKMath.a ../../src/Node/libTKNode.a -lvulkan -ljsoncpp -ljpeg -lpng -lpthread -lxcb 

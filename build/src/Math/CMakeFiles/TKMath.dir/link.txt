@@ -1,0 +1,2 @@
+/usr/bin/ar qc libTKMath.a  CMakeFiles/TKMath.dir/TKCamera.cpp.o CMakeFiles/TKMath.dir/TKComplex.cpp.o CMakeFiles/TKMath.dir/TKDataType.cpp.o CMakeFiles/TKMath.dir/TKMatrix.cpp.o CMakeFiles/TKMath.dir/TKVector.cpp.o
+/usr/bin/ranlib libTKMath.a
