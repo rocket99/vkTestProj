@@ -1,2 +1,0 @@
-/usr/bin/ar qc libTKBase.a  CMakeFiles/TKBase.dir/TKBaseInfo.cpp.o CMakeFiles/TKBase.dir/TKImageView.cpp.o CMakeFiles/TKBase.dir/TKJsonPipeline.cpp.o CMakeFiles/TKBase.dir/TKPipelineLayout.cpp.o CMakeFiles/TKBase.dir/TKRenderPass.cpp.o CMakeFiles/TKBase.dir/TKScene.cpp.o CMakeFiles/TKBase.dir/TKShaderModule.cpp.o CMakeFiles/TKBase.dir/TKUniform.cpp.o CMakeFiles/TKBase.dir/TKVkUtility.cpp.o CMakeFiles/TKBase.dir/TKWindow.cpp.o
-/usr/bin/ranlib libTKBase.a
