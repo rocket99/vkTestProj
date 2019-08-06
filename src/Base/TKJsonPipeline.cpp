@@ -2,6 +2,13 @@
 //TKJsonPipeline.cpp
 //2019-2-22
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
 #include "TKJsonPipeline.h"
 
 TKJsonPipeline::TKJsonPipeline(){

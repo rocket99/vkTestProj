@@ -5,8 +5,15 @@
 #ifndef __Basic_Scene_h__
 #define __Basic_Scene_h__
 
-#include "TKEngine.h"
-#include "Base/TKJsonPipeline.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#include "../../src/TKEngine.h"
 
 class BasicScene:public TKScene
 {

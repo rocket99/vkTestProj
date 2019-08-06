@@ -5,9 +5,14 @@
 #ifndef __TKWindow_h__
 #define __TKWindow_h__
 
-#include "../TKPrefix.h"
-#include <inttypes.h>
-#include <X11/Xlib.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
 #include "TKScene.h"
 
 class TKWindow {
@@ -36,3 +41,4 @@ private:
 };
 
 #endif
+

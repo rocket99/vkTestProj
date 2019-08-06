@@ -13,6 +13,11 @@ extern "C"{
 #include <inttypes.h>
 #include <libpng/png.h>
 #include <jpeglib.h>
+//#include <X11/Xlib.h>	
+#define VK_USE_PLATFORM_XCB_KHR
+#define VK_USE_PLATFORM_XLIB_KHR
+#include <vulkan/vulkan.h>
+#include <vulkan/vk_layer.h>
 	
 #ifdef __cplusplus
 }
@@ -35,10 +40,6 @@ extern "C"{
 using namespace std;
 
 #include <jsoncpp/json/json.h>
-#define VK_USE_PLATFORM_XCB_KHR
-#define VK_USE_PLATFORM_XLIB_KHR
-#include <vulkan/vulkan.h>
-#include <vulkan/vk_layer.h>
 
 #define TK_LOG_ENABLED  1
 #if  TK_LOG_ENABLED

@@ -4,6 +4,13 @@
 #ifndef __TK_Scene_h__
 #define __TK_Scene_h__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
 #include "../TKPrefix.h"
 #include "../Node/TKGeometryObj.h"
 #include "TKBaseInfo.h"

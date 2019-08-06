@@ -115,6 +115,7 @@ void TKModuleManager::prepareAllModules(){
     std::vector<std::string> spvFiles = {
         "light_vert.spv", "light_frag.spv",
         "basic_vert.spv", "basic_frag.spv",
+		"basic_vert_0.spv", "basic_frag_0.spv",
         "vert_fst.spv",   "frag_fst.spv"
     };
     

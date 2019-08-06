@@ -9,3 +9,5 @@ cmake -G "Unix Makefiles" \
       CMAKE_C_COMPILER=clang \
       CMAKE_CXX_COPMPILER=clang++ \
       ..
+
+cp compile_commands.json ../complie_commands.json

@@ -5,6 +5,14 @@
 #ifndef __TKImageView_H__
 #define __TKImageView_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
 #include "../TKPrefix.h"
 
 class TKImageView

@@ -4,6 +4,13 @@
 
 #ifndef __TKBaseNode_h__
 #define __TKBaseNode_h__
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
 
 #include "TKObject.h"
 #include "TKDataDef.h"

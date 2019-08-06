@@ -2,7 +2,15 @@
 //TKBaseVkInfo.cpp
 //2018-12-13
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
 #include "TKBaseInfo.h"
+#include "TKWindow.h"
 
 static TKBaseInfo *instance = nullptr;
 

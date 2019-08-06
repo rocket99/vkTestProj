@@ -5,6 +5,13 @@
 #ifndef __TKJsonPipeline_h__
 #define __TKJsonPipeline_h__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
 #include "../TKPrefix.h"
 #include "TKPipelineLayout.h"
 #include "TKVkUtility.h"

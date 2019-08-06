@@ -1,0 +1,3 @@
+%compile_command.json
+%clang%lsdp -std=gnu++14 -isystem/usr/include
+%h -x c++-header

@@ -4,6 +4,12 @@
 
 #ifndef __TKRenderPass_h__
 #define __TKRenderPass_h__
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 #include "../TKPrefix.h"
 

@@ -1,6 +1,12 @@
 //
 //TKRenderPass.cpp
 //2018-11-17
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 #include "TKRenderPass.h"
 #include "TKBaseInfo.h"

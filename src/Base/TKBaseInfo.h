@@ -5,10 +5,21 @@
 #ifndef __TK_BaseInfo_h__
 #define __TK_BaseInfo_h__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+
 #include "../TKPrefix.h"
 
 #include "TKImageView.h"
 #include "TKRenderPass.h"
+
+
 
 class TKBaseInfo {
 public:

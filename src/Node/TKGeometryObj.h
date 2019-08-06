@@ -4,6 +4,12 @@
 
 #ifndef __TKGeometryObj_h__
 #define __TKGeometryObj_h__
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 #include "TKBaseNode.h"
 

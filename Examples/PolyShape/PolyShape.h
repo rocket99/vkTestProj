@@ -3,9 +3,16 @@
 //
 
 #ifndef __PolyShape_h__
-#define __PoltShape_h__
+#define __PolyShape_h__
 
-#include "TKEngine.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+#include "../../src/TKEngine.h"
 
 class PolyShape {
 public:

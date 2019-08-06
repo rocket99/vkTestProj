@@ -2,38 +2,32 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #ifdef __cplusplus
 }
 #endif
 
-#include "main_scene.h"
-#include "renderpass.h"
+#include "PolyScene.h"
 
-
-int main(int argc, char *argv[]){
-	TKWindow *view = TKWindow::createXcbWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
-	view->initInstance();
-	view->initSurface();
+int main(int argc, char *aegv[]){
+	TKWindow *window = TKWindow::createXcbWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+	window->initInstance();
+	window->initSurface();
 
 	TKBaseInfo::share()->initDevice();
 	TKModuleManager::prepareAllModules();
 	TKBaseInfo::share()->initSwapchain();
-
 	TKBaseInfo::share()->initRenderPass();
 	TKBaseInfo::share()->initFramebuffers();
 	TKBaseInfo::share()->initCommandPool();
-	TKBaseInfo::share()->initDescriptorPool();
 	TKBaseInfo::share()->initFencesAndSemaphores();
-	
-	MainScene *scene = MainScene::create();
-	view->setScene(scene);
-	view->startRefresh();
-	
+
+	PolyScene *scene = PolyScene::create();
+	window->setScene(scene);
+	window->startRefresh();
+
 	TKModuleManager::purge();
-	delete view;
+	delete window;
 
 	TKBaseInfo::purge();
 	return 0;
 }
-

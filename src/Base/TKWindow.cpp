@@ -4,8 +4,17 @@
 
 #include "TKWindow.h"
 #include "TKBaseInfo.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <unistd.h>
 
+#ifdef __cplusplus
+}
+#endif
+	
 TKWindow::TKWindow() {
     m_width = 0;
     m_height = 0;
@@ -143,6 +152,7 @@ void TKWindow::initInstance() {
 }
 
 void TKWindow::initSurface(){
+	
     TKBaseInfo::share()->enumeratePhysicalDevices();
     TKBaseInfo::share()->setGraphicsQueueIndex();
     /*

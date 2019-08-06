@@ -2,8 +2,15 @@
 //main_scene.h
 //
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "TKEngine.h"
+#ifdef __cplusplus
+}
+#endif
+
+#include "../../src/TKEngine.h"
 
 class MainScene: public TKScene
 {

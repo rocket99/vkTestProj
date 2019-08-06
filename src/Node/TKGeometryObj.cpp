@@ -356,7 +356,7 @@ bool TKGeometryObj::initDisk(float radius){
 
 void TKGeometryObj::setVertexBuffer() {
 	printf(" %p set vertex buffer\n", this);
-    VkDevice device = TKBaseInfo::Info()->device;
+    VkDevice device = VK_INFO->device;
     VkBufferCreateInfo bufInfo;
     bufInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufInfo.pNext = nullptr;
@@ -365,7 +365,7 @@ void TKGeometryObj::setVertexBuffer() {
     bufInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     bufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     std::vector<uint32_t> queueFamilies = {
-        TKBaseInfo::Info()->graphicsQueueFamily
+        VK_INFO->graphicsQueueFamily
     };
     bufInfo.queueFamilyIndexCount = queueFamilies.size();
     bufInfo.pQueueFamilyIndices   = queueFamilies.data();
@@ -391,7 +391,7 @@ void TKGeometryObj::setVertexBuffer() {
 }
 
 void TKGeometryObj::setIndexBuffer() {
-    VkDevice device = TKBaseInfo::Info()->device;
+    VkDevice device = VK_INFO->device;
     VkBufferCreateInfo bufInfo;
     bufInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufInfo.pNext = nullptr;
@@ -400,7 +400,7 @@ void TKGeometryObj::setIndexBuffer() {
     bufInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
     bufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     std::vector<uint32_t> queueFamilies = {
-        TKBaseInfo::Info()->graphicsQueueFamily
+        VK_INFO->graphicsQueueFamily
     };
     bufInfo.queueFamilyIndexCount = queueFamilies.size();
     bufInfo.pQueueFamilyIndices   = queueFamilies.data();
@@ -429,7 +429,7 @@ void TKGeometryObj::draw(VkCommandBuffer cmdBuf, uint32_t swapIdx){
 		TKLog("draw 2 point num = %d, index num = %d\n", m_pointNum, m_indexNum);
 		void *pData;
 		VkDeviceSize commitBytes;
-		VkDevice device = TKBaseInfo::Info()->device;
+		VkDevice device = VK_INFO->device;
 		vkGetDeviceMemoryCommitment(device, m_vertexMemory, &commitBytes);
 		vkMapMemory(device, m_vertexMemory, 0, commitBytes, 0, &pData);
 		memcpy(pData, m_points, sizeof(TKVertice)*m_pointNum);
@@ -471,8 +471,8 @@ uint32_t TKGeometryObj::getMemoryTypeIndex(VkMemoryRequirements memoryReq){
    uint32_t memoryTypeIdx = UINT32_MAX;
     VkMemoryPropertyFlags requiredMemoryFlag = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
 		VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    for (uint32_t i=0; i<TKBaseInfo::Info()->physicalMemoryInfo.memoryTypeCount; ++i){
-        VkPhysicalDeviceMemoryProperties memoryInfo = TKBaseInfo::Info()->physicalMemoryInfo;
+    for (uint32_t i=0; i<VK_INFO->physicalMemoryInfo.memoryTypeCount; ++i){
+        VkPhysicalDeviceMemoryProperties memoryInfo = VK_INFO->physicalMemoryInfo;
         VkMemoryPropertyFlags tmpPropertyFlag = memoryInfo.memoryTypes[i].propertyFlags;
         if(memoryReq.memoryTypeBits & (1 << i)){
             if(requiredMemoryFlag == (tmpPropertyFlag & requiredMemoryFlag)){

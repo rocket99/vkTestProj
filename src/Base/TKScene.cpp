@@ -2,6 +2,13 @@
 //TKScene.cpp
 //2018-11-14
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __cplusplus
+}
+#endif
+
 #include "TKScene.h"
 #include "TKBaseInfo.h"
 #include <unistd.h>
@@ -32,12 +39,12 @@ bool TKScene::init(uint32_t width, uint32_t height) {
     m_width = width;
     m_height = height;
     m_currentIdx = 0;
-    vkDeviceWaitIdle(TKBaseInfo::Info()->device);
+    vkDeviceWaitIdle(VK_INFO->device);
     return true;
 }
 
 void TKScene::updateDrawCommand(){
-    vkResetCommandBuffer(TKBaseInfo::Info()->commandBuffers[m_currentIdx],
+    vkResetCommandBuffer(VK_INFO->commandBuffers[m_currentIdx],
                          VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     VkCommandBufferBeginInfo cmdBufBeginInfo;
     cmdBufBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
