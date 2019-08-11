@@ -2,7 +2,7 @@
 //basic_main.cpp
 //2018-12-23
 
-#include "TKEngine.h"
+#include "../../src/TKEngine.h"
 #include "basic_scene.h"
 
 int main(int argc, char *argv[])
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     TKBaseInfo::share()->initDevice();
     TKModuleManager::prepareAllModules();
     TKBaseInfo::share()->initSwapchain();
-    TKBaseInfo::share()->initRenderPass();
+    TKBaseInfo::share()->initRenderPass("renderpass.json");
     TKBaseInfo::share()->initFramebuffers();
     TKBaseInfo::share()->initCommandPool();
     TKBaseInfo::share()->initDescriptorPool();

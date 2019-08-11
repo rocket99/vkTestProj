@@ -30,45 +30,64 @@ TKWindow::~TKWindow() {
     xcb_disconnect(m_connection);
 }
 
-TKWindow *TKWindow::createXcbWindow(uint32_t width, uint32_t height){
+TKWindow *TKWindow::createXcbWindow(uint32_t width, uint32_t height, const std::string &title){
     TKWindow *window = new TKWindow;
-    if(window->initXcbWindow(width, height)==false){
+    if(window->initXcbWindow(width, height, title)==false){
         delete window;
         window = nullptr;
     }
     return window;
 }
 
-bool TKWindow::initXcbWindow(uint32_t width, uint32_t height) {
+bool TKWindow::initXcbWindow(uint32_t width, uint32_t height, const std::string &title) {
     TKLog("init xcb window!\n");
     m_width = width;
     m_height = height;
+	m_title = title;
     TKLog("window width=%d, height=%d\n", width, height);
-    uint32_t mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-    uint32_t values[2];
     m_isRunning = true;
-    m_connection = xcb_connect(nullptr, nullptr);
+	int scr;
+    m_connection = xcb_connect(nullptr, &scr);
+	if(m_connection == nullptr){
+		printf("Could not find a compatible Vulkan ICD!\n");
+		return false;
+	}
     const xcb_setup_t *setup = xcb_get_setup(m_connection);
-    xcb_screen_t *screen = xcb_setup_roots_iterator(setup).data;
-    m_visualid = screen->root_visual;
-    values[0] = screen->white_pixel;
-    values[1] =
-        XCB_EVENT_MASK_EXPOSURE       | XCB_EVENT_MASK_KEY_PRESS      |
-        XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION |
-        XCB_EVENT_MASK_ENTER_WINDOW   | XCB_EVENT_MASK_LEAVE_WINDOW   |
-        XCB_EVENT_MASK_KEY_PRESS      | XCB_EVENT_MASK_KEY_RELEASE;
+    xcb_screen_iterator_t iter = xcb_setup_roots_iterator(setup);
+	while(scr-- > 0){
+		xcb_screen_next(&iter);
+	}
+	xcb_screen_t *screen = iter.data;
+
+	uint32_t value_mask, value_list[32];
+
+	value_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+	m_visualid = screen->root_visual;
+    value_list[0] = screen->black_pixel;
+    value_list[1] =
+        XCB_EVENT_MASK_KEY_RELEASE  |
+		XCB_EVENT_MASK_KEY_PRESS    |
+        XCB_EVENT_MASK_EXPOSURE     |
+		XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+        XCB_EVENT_MASK_POINTER_MOTION   |
+		XCB_EVENT_MASK_BUTTON_PRESS |
+        XCB_EVENT_MASK_KEY_RELEASE;
     m_window = xcb_generate_id(m_connection);
     xcb_create_window(m_connection, XCB_COPY_FROM_PARENT, m_window, screen->root,
-                      0, 0, m_width, m_height, 10, XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                      screen->root_visual, mask, values);
+                      0, 0, m_width, m_height, 0, XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                      screen->root_visual, value_mask, value_list);
+
+	xcb_intern_atom_reply_t *reply = this->intern_atom_helper(m_connection, true, "WM_PROTOCOLS");
+	xcb_intern_atom_reply_t *atom_wm_delete_window = this->intern_atom_helper(m_connection, false, "WM_DELETE_WINDOW");
+	xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window, reply->atom,
+						4, 32, 1, &atom_wm_delete_window->atom);    
+	free(reply);
+    xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window, XCB_ATOM_WM_NAME,
+						XCB_ATOM_STRING, 8, strlen(m_title.c_str()), m_title.c_str());
+
     xcb_map_window(m_connection, m_window);
     xcb_flush(m_connection);
 
-	
-    xcb_change_property(m_connection, XCB_PROP_MODE_REPLACE, m_window,
-                        XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 8, strlen("Triangle"), "Triangle");
-    xcb_flush(m_connection);
-    
     return true;
 }
 
@@ -87,11 +106,11 @@ void TKWindow::initInstance() {
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
     std::vector<VkLayerProperties>layerProps(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, layerProps.data());
-	/*  
+/*  
     for(uint32_t i=0; i<layerCount; ++i){
         printf("\t%s\n", layerProps[i].layerName);
     }
-    */
+*/
     VkApplicationInfo appInfo;
     appInfo.sType               = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pNext               = nullptr;
@@ -106,30 +125,16 @@ void TKWindow::initInstance() {
     info.pNext                  = nullptr;
     info.flags                  = 0;
     info.pApplicationInfo       = &appInfo;
-    std::vector<const char *> enabledLayers = {
-											   //"VK_LAYER_LUNARG_core_validation",
-			"VK_LAYER_LUNARG_vktrace",
-			"VK_LAYER_LUNARG_standard_validation"
-	};
-	/*
-    for(uint32_t i=0; i<layerCount; ++i){
-        if(strcmp(layerProps[i].layerName, "VK_LAYER_LUNARG_device_simulation")==0){
-            continue;
-        }
-        enabledLayers.push_back(layerProps[i].layerName);
-		}*/
+
+	std::vector<const char *> enabledLayers;
+	enabledLayers.push_back("VK_LAYER_LUNARG_standard_validation");
     info.enabledLayerCount      = enabledLayers.size();
     info.ppEnabledLayerNames    = enabledLayers.data();
-    std::vector<const char *> enabledExtensions = {
-		"VK_KHR_surface", "VK_KHR_xcb_surface",
-		//"VK_KHR_display_surface_counter"
-		//"VK_KHR_debug_report"
-	};
-	/*
-    for(uint32_t i=0; i<instExtensionCount; ++i){
-        enabledExtensions.push_back(instExtensions[i].extensionName);
-	}
-	*/
+	
+    std::vector<const char *> enabledExtensions;
+	enabledExtensions.push_back( VK_KHR_SURFACE_EXTENSION_NAME );
+	enabledExtensions.push_back("VK_KHR_surface");
+	enabledExtensions.push_back("VK_KHR_xcb_surface");
 	info.enabledExtensionCount   = enabledExtensions.size();
     info.ppEnabledExtensionNames = enabledExtensions.data();
 
@@ -142,7 +147,6 @@ void TKWindow::initInstance() {
 		printf("\t%s\n", enabledExtensions[i]);
 	}
 	
-	
     VkResult result = vkCreateInstance(&info, nullptr, &VK_INFO->instance);
     if(result != VK_SUCCESS){
         TKLog("create vulkan instance failed! ERROR: %d\n", result);
@@ -152,7 +156,6 @@ void TKWindow::initInstance() {
 }
 
 void TKWindow::initSurface(){
-	
     TKBaseInfo::share()->enumeratePhysicalDevices();
     TKBaseInfo::share()->setGraphicsQueueIndex();
     /*
@@ -192,7 +195,6 @@ void TKWindow::initSurface(){
     vkGetPhysicalDeviceSurfaceFormatsKHR(VK_INFO->physicalDevice, surface,
                                          &formatCount, VK_INFO->surfaceFormats.data());
     VK_INFO->surface = surface;
-
     TKBaseInfo::share()->setPresentQueueIndex();
 }
 
@@ -257,3 +259,9 @@ void TKWindow::setScene(TKScene *scene){
         m_scene = scene;
     }
 }
+
+xcb_intern_atom_reply_t *TKWindow::intern_atom_helper(xcb_connection_t *conn, bool only_if_exists, const char *str){
+	xcb_intern_atom_cookie_t cookie = xcb_intern_atom(conn, only_if_exists, strlen(str), str);
+	return xcb_intern_atom_reply(conn, cookie, nullptr);
+}
+

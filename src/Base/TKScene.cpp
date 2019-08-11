@@ -39,6 +39,7 @@ bool TKScene::init(uint32_t width, uint32_t height) {
     m_width = width;
     m_height = height;
     m_currentIdx = 0;
+	backgroundColor = Float4(0.5, 0.5, 0.5, 1.0);
     vkDeviceWaitIdle(VK_INFO->device);
     return true;
 }
@@ -94,9 +95,10 @@ void TKScene::updateDrawCommand(){
     beginInfo.framebuffer = TKBaseInfo::Info()->framebuffers[m_currentIdx];
     beginInfo.renderArea  = { {0, 0}, {SCREEN_WIDTH, SCREEN_HEIGHT} };
     std::vector<VkClearValue> clearValues(2);
-	const float values[] = {0.45, 0.65, 0.75, 1.0};
-    memcpy(clearValues[0].color.float32, values, sizeof(float)*4);
-    clearValues[1].depthStencil.depth = 1.0f;
+	
+    backgroundColor.copyTo(clearValues[0].color.float32);
+
+	clearValues[1].depthStencil.depth = 1.0f;
     clearValues[1].depthStencil.stencil = 0.0f;
     beginInfo.clearValueCount = clearValues.size();
     beginInfo.pClearValues    = clearValues.data();

@@ -14,6 +14,7 @@ extern "C" {
 #include "../TKPrefix.h"
 #include "../Node/TKGeometryObj.h"
 #include "TKBaseInfo.h"
+#include "../Math/TKMath.h"
 
 class TKScene {
 public:
@@ -35,6 +36,8 @@ protected:
     std::vector<TKBaseNode *> m_drawNodes;
     void updateDrawCommand();
     virtual void drawObjects();
+	
+	Float4 backgroundColor;
 };
 
 #endif

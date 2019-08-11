@@ -866,6 +866,7 @@ Float3 Float3::cross(const Float3 &value){
                   z*value.x-x*value.z,
                   x*value.y-y*value.x);
 }
+
 #pragma mark Float4
 Float4::Float4(float a, float b, float c, float d){
     x=a; y=b; z=c; w=d;

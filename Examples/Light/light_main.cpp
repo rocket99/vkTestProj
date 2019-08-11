@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     TKBaseInfo::share()->initDevice();
     
     TKBaseInfo::share()->initSwapchain();
-    TKBaseInfo::share()->initRenderPass();
+    TKBaseInfo::share()->initRenderPass("renderpass.json");
     TKBaseInfo::share()->initFramebuffers();
     TKBaseInfo::share()->initCommandPool();
 	TKBaseInfo::share()->initDescriptorPool();

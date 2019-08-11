@@ -113,7 +113,7 @@
                                   "VK_COLOR_COMPONENT_B_BIT","VK_COLOR_COMPONENT_A_BIT"]
             }
         ],
-        "blendConstants":[1.0, 1.0, 1.0, 1.0]
+        "blendConstants":[0.0, 0.0, 0.0, 0.0]
     },
     "DynamicState":[
         "VK_DYNAMIC_STATE_VIEWPORT",

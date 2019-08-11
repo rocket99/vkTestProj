@@ -34,13 +34,13 @@ public:
     void initSwapchain();
     void initFramebuffers();
     void initCommandPool();
-    void initRenderPass();
+    void initRenderPass(const char *renderpassJsonFile);
     void initFencesAndSemaphores();
     void initDescriptorPool();
     
     void setGraphicsQueueIndex();
     void setPresentQueueIndex();
-    static uint32_t getMemoryTypeIndex(VkMemoryRequirements memoryReq);
+    static uint32_t getMemoryTypeIndex(VkMemoryRequirements memoryReq, VkMemoryPropertyFlags flag);
 	
 private:
     TKRenderPass *m_renderPass;
@@ -49,6 +49,8 @@ private:
     void displayInstanceLayers();
     void displayDeviceLayers();
 };
+
 #define VK_INFO  TKBaseInfo::share()->baseInfo()
+
 #endif
 

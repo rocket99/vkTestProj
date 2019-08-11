@@ -66,7 +66,7 @@ bool TKImageView::initDepthStencilImage(BaseVkInfo *info) {
     createInfo.arrayLayers  = 1;
     createInfo.samples      = VK_SAMPLE_COUNT_1_BIT;
     createInfo.tiling       = VK_IMAGE_TILING_OPTIMAL;
-    createInfo.usage        = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    createInfo.usage        = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     createInfo.sharingMode  = VK_SHARING_MODE_EXCLUSIVE;
     createInfo.queueFamilyIndexCount = 0;
     createInfo.pQueueFamilyIndices   = nullptr;
@@ -126,6 +126,9 @@ bool TKImageView::initDepthStencilImage(BaseVkInfo *info) {
     viewInfo.subresourceRange.levelCount     = 1;
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount     = 1;
+	if (VK_FORMAT_D32_SFLOAT >= VK_FORMAT_D16_UNORM_S8_UINT){
+		viewInfo.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+	}
     ret = vkCreateImageView(info->device, &viewInfo, nullptr, &m_imageView);
     if(ret != VK_SUCCESS) {
         TKLog("create depth image view failed!\n");

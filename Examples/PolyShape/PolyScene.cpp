@@ -36,7 +36,7 @@ bool PolyScene::init(){
 	this->initData();
 	this->initIndexBuffer();
 	this->initVertexBuffer();
-
+	backgroundColor = Float4(0.8, 0.7, 0.5, 1.0);
 	return true;
 }
 
@@ -65,6 +65,7 @@ void PolyScene::drawObjects(){
 }
 
 void PolyScene::initData(){
+	
 	m_points = (float*)malloc(sizeof(float)*3*33);
 	m_points[0] = m_points[1] = m_points[2] = 0.0;
 	for(uint32_t i=1; i<33; ++i){
@@ -180,7 +181,7 @@ void PolyScene::initIndexBuffer(){
 	TK_CHECK(vkBindBufferMemory(device, stageBuffer, stageMemory, 0));
 
 
-	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+	bufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	TK_CHECK(vkCreateBuffer(VK_INFO->device, &bufferInfo, nullptr, &m_indexBuffer));
 
 	vkGetBufferMemoryRequirements(VK_INFO->device, m_indexBuffer, &memReqInfo);
@@ -224,29 +225,35 @@ VkCommandBuffer PolyScene::getCommandBuffer(bool begin){
 	cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	cmdBufAllocateInfo.commandBufferCount = 1;
 	vkAllocateCommandBuffers(VK_INFO->device, &cmdBufAllocateInfo, &cmdBuf);
-	if (begin){
-		VkCommandBufferBeginInfo cmdBufInfo;
+	if(begin){
+		VkCommandBufferBeginInfo cmdBufInfo {};
 		cmdBufInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		cmdBufInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		vkBeginCommandBuffer(cmdBuf, &cmdBufInfo);
+		TK_CHECK(vkBeginCommandBuffer(cmdBuf, &cmdBufInfo));
 	}
+	printf("init command buffer\n");
 	return cmdBuf;
 }
 
 void PolyScene::flushCommandBuffer(VkCommandBuffer cmdBuf){
+	
 	vkEndCommandBuffer(cmdBuf);
-	VkSubmitInfo submitInfo;
+	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &cmdBuf;
-	VkFenceCreateInfo fenceInfo;
+	VkFenceCreateInfo fenceInfo{};
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = 0;
 	VkFence fence;
-	vkCreateFence(VK_INFO->device, &fenceInfo, nullptr, &fence);
+	TK_CHECK(vkCreateFence(VK_INFO->device, &fenceInfo, nullptr, &fence));
+	printf("submit ----\n");
 	vkQueueSubmit(VK_INFO->graphicsQueue, 1, &submitInfo, fence);
+	printf("submit end -----\n");
 	vkWaitForFences(VK_INFO->device, 1, &fence, VK_TRUE, INT_MAX);
 	vkDestroyFence(VK_INFO->device, fence, nullptr);
 	vkFreeCommandBuffers(VK_INFO->device, VK_INFO->commandPool, 1, &cmdBuf);
+	printf("flush command buffer");
 }
+
+
 

@@ -360,8 +360,8 @@ void TKBaseInfo::initCommandPool() {
     }
 }
 
-void TKBaseInfo::initRenderPass(){
-	m_renderPass = TKRenderPass::createWithJson("renderpass.json");
+void TKBaseInfo::initRenderPass(const char *renderpassJsonFile){
+	m_renderPass = TKRenderPass::createWithJson(renderpassJsonFile);
 	m_info->renderPass = m_renderPass->renderPass();
 	//render pass has included depth attachment 
     m_info->colorAttachmentCount = m_renderPass->ColorAttachCount();
@@ -464,15 +464,14 @@ void TKBaseInfo::displayDeviceLayers(){
 }
 
 
-uint32_t TKBaseInfo::getMemoryTypeIndex(VkMemoryRequirements memoryReq){
-   uint32_t memoryTypeIdx = UINT32_MAX;
-    VkMemoryPropertyFlags requiredMemoryFlag = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-        VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+uint32_t TKBaseInfo::getMemoryTypeIndex(VkMemoryRequirements memoryReq, VkMemoryPropertyFlags flag){
+	uint32_t memoryTypeIdx = UINT32_MAX;
+    
     for (uint32_t i=0; i<TKBaseInfo::Info()->physicalMemoryInfo.memoryTypeCount; ++i){
         VkPhysicalDeviceMemoryProperties memoryInfo = TKBaseInfo::Info()->physicalMemoryInfo;
         VkMemoryPropertyFlags tmpPropertyFlag = memoryInfo.memoryTypes[i].propertyFlags;
         if(memoryReq.memoryTypeBits & (1 << i)){
-            if(requiredMemoryFlag == (tmpPropertyFlag & requiredMemoryFlag)){
+            if(flag == (tmpPropertyFlag && flag)){
                 memoryTypeIdx = i;
                 break;
             }
@@ -480,3 +479,5 @@ uint32_t TKBaseInfo::getMemoryTypeIndex(VkMemoryRequirements memoryReq){
     }
     return memoryTypeIdx;
 }
+
+

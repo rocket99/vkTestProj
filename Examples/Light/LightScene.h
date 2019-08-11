@@ -5,7 +5,8 @@
 #ifndef __Light_Scene_h__
 #define __Light_Scene_h__
 
-#include "TKEngine.h"
+#include "../../src/TKEngine.h"
+
 
 class LightScene : public TKScene
 {
